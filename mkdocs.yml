@@ -8,10 +8,18 @@ repo_name: ecological-interaction
 theme:
   name: material
 
+hooks:
+  - scripts/eirkb_publication.py
+
 nav:
   - Home: index.md
   - Understanding: understanding/index.md
-  - Information: information/index.md
+  - Information:
+      - Overview: information/index.md
+      - EIRKB:
+          - Introduction: information/EIRKB/index.md
+          - History and Theory of Ecological Information: information/EIRKB/history-and-theory.md
+          - Reference Register: information/EIRKB/reference-register.md
   - Computation: computation/index.md
   - Intelligence: intelligence/index.md
   - Infrastructure: infrastructure/index.md
