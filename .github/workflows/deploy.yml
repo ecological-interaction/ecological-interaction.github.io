@@ -26,6 +26,41 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Read approved EIRKB version
+        id: eirkb
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import re
+
+          manifest = json.loads(Path("publications/eirkb.json").read_text())
+          if manifest["repository"] != "https://github.com/ecological-interaction/EIRKB":
+              raise SystemExit("Unexpected EIRKB source repository")
+          commit = manifest["commit"]
+          if not re.fullmatch(r"[0-9a-f]{40}", commit):
+              raise SystemExit("EIRKB requires an explicitly approved full commit SHA")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write(f"commit={commit}\n")
+          PY
+
+      - name: Retrieve approved EIRKB commit anonymously
+        env:
+          EIRKB_COMMIT: ${{ steps.eirkb.outputs.commit }}
+          GIT_TERMINAL_PROMPT: "0"
+          GIT_ASKPASS: /bin/false
+          GIT_CONFIG_NOSYSTEM: "1"
+          GIT_CONFIG_GLOBAL: /dev/null
+        run: |
+          git init --bare --initial-branch=main .sources/EIRKB
+          git -C .sources/EIRKB \
+            -c credential.helper= -c core.askPass= -c http.extraHeader= \
+            fetch --depth=1 --no-tags \
+            https://github.com/ecological-interaction/EIRKB.git "$EIRKB_COMMIT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -38,7 +73,12 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
+      - name: Test publication import
+        run: uv run python -B -m unittest discover -s tests -v
+
       - name: Build website
+        env:
+          EIRKB_SOURCE: ${{ github.workspace }}/.sources/EIRKB
         run: uv run mkdocs build --strict
 
       - name: Configure Pages

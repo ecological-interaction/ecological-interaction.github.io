@@ -1,4 +1,4 @@
-"""Opt-in, pinned EIRKB preview. Normal and hosted builds import no research."""
+"""Import only approved EIRKB documents, pinned by commit and checksum."""
 
 import hashlib
 import json
@@ -15,7 +15,6 @@ MARKER = "<!-- EIRKB_PREVIEW_LINK -->"
 INTRODUCTION = "information/EIRKB/index.md"
 REGISTER = "information/EIRKB/reference-register.md"
 WORKBOOK = "registers/ecological_information_complete_reference_register_v0.1.xlsx"
-_enabled = False
 _manifest = None
 
 
@@ -39,29 +38,23 @@ def read_document(source, commit, document):
 
 
 def on_config(config):
-    global _enabled, _manifest
-    _enabled = os.environ.get("EIRKB_PREVIEW") == "1"
+    global _manifest
     _manifest = None
-    if _enabled and os.environ.get("GITHUB_ACTIONS", "").lower() == "true":
+    hosted = os.environ.get("GITHUB_ACTIONS", "").lower() == "true"
+    preview = os.environ.get("EIRKB_PREVIEW") == "1"
+    if preview and hosted:
         raise ConfigurationError(
-            "EIRKB preview is local-only. Hosted publication needs separate approval."
+            "EIRKB_PREVIEW is local-only; hosted builds must use the normal site output."
         )
-    if not _enabled:
-        # The source nav describes the preview; ordinary builds retain Overview only.
-        for section in config.nav:
-            if "Information" in section:
-                section["Information"] = [
-                    item for item in section["Information"] if "EIRKB" not in item
-                ]
-        return config
+    if hosted and not os.environ.get("EIRKB_SOURCE", "").strip():
+        raise ConfigurationError("Hosted builds require the approved EIRKB checkout at EIRKB_SOURCE.")
     _manifest = json.loads((ROOT / "publications/eirkb.json").read_text())
-    config.site_dir = str(ROOT / "site-preview")
+    if preview:
+        config.site_dir = str(ROOT / "site-preview")
     return config
 
 
 def on_files(files, config):
-    if not _enabled:
-        return files
     source = Path(os.environ.get(
         "EIRKB_SOURCE", str(ROOT.parent / "ecological-information/EIRKB")
     )).expanduser()
@@ -91,10 +84,9 @@ def on_page_markdown(markdown, page, **kwargs):
         link = (
             "[EIRKB — Ecological Information Reference Knowledge Base](EIRKB/index.md)\n\n"
             "History, intellectual lineages, conceptual maps and a reference register."
-            if _enabled else ""
         )
         return markdown.replace(MARKER, link)
-    if _enabled and page.file.src_uri == REGISTER:
+    if page.file.src_uri == REGISTER:
         # Presentation-only link resolution; committed research bytes remain unchanged.
         # No unapproved workbook is copied into the site.
         destination = (

@@ -18,14 +18,13 @@ Classifications remain provisional and references are undergoing verification.
 - [Reference Register](reference-register.md): references, concepts, people,
   classifications, relationships and source notes.
 
-The research is maintained independently in EIRKB. This local preview reads
+The research is maintained independently in EIRKB. This reading interface uses
 the selected documents from commit
 `bbc7c0e755a2504a450272691aed6741af5aa6a7`; it does not follow later research
 commits or uncommitted edits.
 
-The register's source-workbook link leads to that same version in the private
-research repository and requires repository access. The workbook itself is
-not included in this preview.
+The register's source-workbook link leads to that same version in the public
+research repository. The workbook itself is not included in this publication
+interface.
 
-This is a local review interface. Public publication and hosted integration
-have not been enabled. No publication date, DOI or licence is assigned here.
+No publication date, DOI or licence is assigned here.
