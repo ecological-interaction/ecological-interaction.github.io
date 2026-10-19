@@ -1,0 +1,18 @@
+site_name: Ecological Interaction
+site_description: Open ecological research, computation and design
+site_url: https://ecological-interaction.github.io/
+
+repo_url: https://github.com/ecological-interaction/ecological-interaction.github.io
+repo_name: ecological-interaction
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Understanding: understanding/index.md
+  - Information: information/index.md
+  - Computation: computation/index.md
+  - Intelligence: intelligence/index.md
+  - Infrastructure: infrastructure/index.md
+  - Generation: generation/index.md
