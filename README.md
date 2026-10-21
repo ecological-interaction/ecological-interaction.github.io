@@ -83,3 +83,26 @@ overview replaces the former website-owned Mermaid page.
 Use the existing test/build commands above, then preview with
 `uv run --no-sync mkdocs serve --dev-addr 127.0.0.1:8000` at
 `http://127.0.0.1:8000/information/` and `/information/DRM/`.
+
+## GISDS publication
+
+`publications/gisds.json` pins the approved GISDS commit and checksums.
+`GISDS.md` supplies `/information/GISDS/` and `README.md` supplies its research
+guide. The source table is retained verbatim; only website navigation and guide
+link destinations are adapted. Citation and changelog links point to the same
+pinned GitHub commit. Provider datasets remain at their original external
+sources; no dataset download or research copy is hosted in this repository.
+
+The importer adds a catalogue/guide navigation link after the imported
+Information overview without editing the umbrella manuscript. Existing
+Information and EIRKB pins and source documents are independent and unchanged.
+`GISDS_SOURCE` can select a checkout or bare repository containing the approved
+commit; the local default is `../ecological-information/GISDS`. GitHub Actions
+fetches the exact commit anonymously into `.sources/GISDS`, preserving automatic
+Pages deployment on website `main` pushes. Source updates alone do not change
+publication until a new manifest pin and checksums are approved.
+
+Use the existing tests and strict build above. Preview with
+`uv run --no-sync mkdocs serve --dev-addr 127.0.0.1:8000`, then open
+`http://127.0.0.1:8000/information/GISDS/` and
+`http://127.0.0.1:8000/information/GISDS/research-guide/`.

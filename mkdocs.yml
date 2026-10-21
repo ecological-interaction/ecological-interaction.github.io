@@ -11,6 +11,7 @@ theme:
 hooks:
   - scripts/eirkb_publication.py
   - scripts/information_publication.py
+  - scripts/gisds_publication.py
 
 nav:
   - Home: index.md
@@ -22,6 +23,9 @@ nav:
           - Introduction: information/EIRKB/index.md
           - History and Theory of Ecological Information: information/EIRKB/history-and-theory.md
           - Reference Register: information/EIRKB/reference-register.md
+      - GISDS:
+          - Resource catalogue: information/GISDS/index.md
+          - Research guide: information/GISDS/research-guide.md
   - Computation: computation/index.md
   - Intelligence: intelligence/index.md
   - Infrastructure: infrastructure/index.md
