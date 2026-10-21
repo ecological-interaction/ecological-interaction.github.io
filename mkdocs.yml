@@ -12,6 +12,7 @@ hooks:
   - scripts/eirkb_publication.py
   - scripts/information_publication.py
   - scripts/gisds_publication.py
+  - scripts/eii_publication.py
 
 nav:
   - Home: index.md
@@ -26,6 +27,10 @@ nav:
       - GISDS:
           - Resource catalogue: information/GISDS/index.md
           - Research guide: information/GISDS/research-guide.md
+      - EII:
+          - Scientific catalogue: information/EII/index.md
+          - Research guide: information/EII/research-guide.md
+          - Machine reference: information/EII/machine-reference.md
   - Computation: computation/index.md
   - Intelligence: intelligence/index.md
   - Infrastructure: infrastructure/index.md

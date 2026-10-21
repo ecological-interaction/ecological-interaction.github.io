@@ -106,3 +106,30 @@ Use the existing tests and strict build above. Preview with
 `uv run --no-sync mkdocs serve --dev-addr 127.0.0.1:8000`, then open
 `http://127.0.0.1:8000/information/GISDS/` and
 `http://127.0.0.1:8000/information/GISDS/research-guide/`.
+
+## EII publication
+
+`publications/eii.json` pins EII's approved source commit. The scientific register
+and README are generated at `/information/EII/` and its `research-guide/` page.
+Only local link targets and website navigation are adapted; indicator tables,
+wording, classifications and scholarly references remain source-owned.
+The Information overview gains a website navigation link without changing its
+source manuscript or existing GISDS link.
+
+The `machine-reference/` page links to the full authoritative machine reference
+and raw Markdown at the same pinned commit. The remote-sensing subset is linked
+from the guide at that commit. Both source-only references have checksums in
+the manifest and are verified during builds; their research bodies are not
+copied into website source or rendered as duplicate registers. The machine file
+contains JSON fences inside Markdown and must not be parsed as standalone JSON.
+
+The local default source is `../ecological-information/EII`; `EII_SOURCE` can
+select another checkout or bare repository containing the approved commit.
+GitHub Actions retrieves it anonymously into `.sources/EII`. The existing
+Information, EIRKB and GISDS approval pins remain independent. Public access
+does not assign a licence or grant reuse permissions.
+
+Run the publication tests and strict build above, then preview with
+`uv run --no-sync mkdocs serve --dev-addr 127.0.0.1:8000` at
+`http://127.0.0.1:8000/information/EII/`, its `research-guide/` and
+`machine-reference/` pages. Review before committing or pushing.
