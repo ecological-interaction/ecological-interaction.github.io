@@ -63,3 +63,23 @@ Run the local checks with:
 uv run --no-sync python -B -m unittest discover -s tests -v
 uv run --no-sync mkdocs build --strict
 ```
+
+## Ecological Information publication
+
+The Information overview, DRM introduction, federation PNG and historical
+reorganisation JSON are generated from the approved commit and SHA-256 allowlist
+in `publications/information.json`. Their source remains the independent
+`ecological-information/ecological-information` checkout; no editable academic
+copies are maintained in this website. Only README link destinations are mapped
+to MkDocs index paths; the image and historical JSON are copied byte-for-byte.
+
+Set `INFORMATION_SOURCE` to another checkout or bare repository containing the
+pinned commit if needed. GitHub Actions fetches it anonymously into
+`.sources/ecological-information`. Changing source `main` alone does not advance
+the published version: approve a new manifest commit and checksums explicitly.
+EIRKB retains its separate source pin, importer and navigation. The generated
+overview replaces the former website-owned Mermaid page.
+
+Use the existing test/build commands above, then preview with
+`uv run --no-sync mkdocs serve --dev-addr 127.0.0.1:8000` at
+`http://127.0.0.1:8000/information/` and `/information/DRM/`.

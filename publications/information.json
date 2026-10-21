@@ -1,0 +1,26 @@
+{
+  "repository": "https://github.com/ecological-interaction/ecological-information",
+  "commit": "c10e39b29dda883272b3ae501e8dfcf0f332c494",
+  "files": [
+    {
+      "source": "README.md",
+      "page": "information/index.md",
+      "sha256": "c519e0160fe6148563137e086669317f6853c7d2d0a2350614c6268b782d3251"
+    },
+    {
+      "source": "DRM/README.md",
+      "page": "information/DRM/index.md",
+      "sha256": "f54106aaf8d7882f981c5f4f41c3053ad46d2253f66e58d7d382df65e3667eab"
+    },
+    {
+      "source": "assets/diagrams/federated-knowledge-systems.png",
+      "page": "information/assets/diagrams/federated-knowledge-systems.png",
+      "sha256": "6e503a14bcc9243e3084cb445f675583049f29ccb63d8be4ae90d385f7fc5e1b"
+    },
+    {
+      "source": "REORGANISATION.json",
+      "page": "information/REORGANISATION.json",
+      "sha256": "b36c676e5ecc782eeba1325a3a9403b2fd039f44b35ffd9cea9f6abfab96229e"
+    }
+  ]
+}

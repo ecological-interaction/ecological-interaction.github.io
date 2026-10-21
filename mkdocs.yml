@@ -10,12 +10,14 @@ theme:
 
 hooks:
   - scripts/eirkb_publication.py
+  - scripts/information_publication.py
 
 nav:
   - Home: index.md
   - Understanding: understanding/index.md
   - Information:
       - Overview: information/index.md
+      - DRM: information/DRM/index.md
       - EIRKB:
           - Introduction: information/EIRKB/index.md
           - History and Theory of Ecological Information: information/EIRKB/history-and-theory.md

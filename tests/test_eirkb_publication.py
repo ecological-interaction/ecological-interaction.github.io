@@ -128,9 +128,9 @@ class EIRKBPublicationTests(unittest.TestCase):
         self.assertIn("fetch --depth=1 --no-tags", source["run"])
         self.assertIn('https://github.com/ecological-interaction/EIRKB.git "$EIRKB_COMMIT"', source["run"])
         build = next(s for s in steps if s["name"] == "Build website")
-        self.assertEqual(build["env"], {
-            "EIRKB_SOURCE": "${{ github.workspace }}/.sources/EIRKB",
-        })
+        self.assertEqual(
+            build["env"]["EIRKB_SOURCE"], "${{ github.workspace }}/.sources/EIRKB"
+        )
         upload = next(s for s in steps if s["name"] == "Upload website")
         self.assertEqual(upload["with"]["path"], "site")
         self.assertLess(steps.index(source), steps.index(build))
