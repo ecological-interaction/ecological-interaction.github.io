@@ -140,6 +140,32 @@ jobs:
           ], check=True)
           PYTHON
 
+      - name: Retrieve approved OSDS commit anonymously
+        env:
+          GIT_TERMINAL_PROMPT: "0"
+          GIT_ASKPASS: /bin/false
+          GIT_CONFIG_NOSYSTEM: "1"
+          GIT_CONFIG_GLOBAL: /dev/null
+        run: |
+          python3 - <<'PYTHON'
+          import json
+          from pathlib import Path
+          import re
+          import subprocess
+
+          data = json.loads(Path("publications/osds.json").read_text())
+          repository = "https://github.com/ecological-interaction/OSDS"
+          if data["repository"] != repository or not re.fullmatch(r"[0-9a-f]{40}", data["commit"]):
+              raise SystemExit("Unexpected OSDS repository or unapproved commit")
+          source = ".sources/OSDS"
+          subprocess.run(["git", "init", "--bare", "--initial-branch=main", source], check=True)
+          subprocess.run([
+              "git", "-C", source, "-c", "credential.helper=", "-c", "core.askPass=",
+              "-c", "http.extraHeader=", "fetch", "--depth=1", "--no-tags",
+              repository + ".git", data["commit"],
+          ], check=True)
+          PYTHON
+
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
@@ -152,6 +178,8 @@ jobs:
         run: uv sync --frozen
 
       - name: Test publication import
+        env:
+          OSDS_SOURCE: ${{ github.workspace }}/.sources/OSDS
         run: uv run python -B -m unittest discover -s tests -v
 
       - name: Build website
@@ -160,6 +188,7 @@ jobs:
           INFORMATION_SOURCE: ${{ github.workspace }}/.sources/ecological-information
           GISDS_SOURCE: ${{ github.workspace }}/.sources/GISDS
           EII_SOURCE: ${{ github.workspace }}/.sources/EII
+          OSDS_SOURCE: ${{ github.workspace }}/.sources/OSDS
         run: uv run mkdocs build --strict
 
       - name: Configure Pages

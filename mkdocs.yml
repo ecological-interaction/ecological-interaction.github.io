@@ -13,6 +13,7 @@ hooks:
   - scripts/information_publication.py
   - scripts/gisds_publication.py
   - scripts/eii_publication.py
+  - scripts/osds_publication.py
 
 nav:
   - Home: index.md
@@ -31,6 +32,10 @@ nav:
           - Scientific catalogue: information/EII/index.md
           - Research guide: information/EII/research-guide.md
           - Machine reference: information/EII/machine-reference.md
+      - OSDS:
+          - Scientific catalogue: information/OSDS/index.md
+          - Research guide: information/OSDS/research-guide.md
+          - Machine reference: information/OSDS/machine-reference.md
   - Computation: computation/index.md
   - Intelligence: intelligence/index.md
   - Infrastructure: infrastructure/index.md

@@ -133,3 +133,39 @@ Run the publication tests and strict build above, then preview with
 `uv run --no-sync mkdocs serve --dev-addr 127.0.0.1:8000` at
 `http://127.0.0.1:8000/information/EII/`, its `research-guide/` and
 `machine-reference/` pages. Review before committing or pushing.
+
+## OSDS publication
+
+`publications/osds.json` pins approved OSDS commit
+`bc9eafc67d0703c17cae40e56898ccb5d3e0f19a` and SHA-256 checksums.
+The Scientific Reference Register supplies `/information/OSDS/`; the source
+README supplies its `research-guide/` page. The `machine-reference/` page links
+to the authoritative machine Markdown and raw file at that same commit. Its
+checksum is verified, but its 62-record research body is not duplicated here.
+It contains 63 JSON fences inside Markdown, not a standalone JSON file.
+
+Scientific record links preserve their `#src-NNN` fragments on the pinned GitHub
+machine source. Source tables, ordering, descriptions, classifications, provider
+URLs and candidate status remain unchanged; only local link destinations and
+website navigation are adapted. The Information overview gains an OSDS link
+without changing the umbrella manuscript or any existing publication pins.
+The research guide imports the README's federation illustration directly below
+its title. The manifest allowlists `assets/diagrams/osds_federation.svg` and
+imports its verified bytes to `information/OSDS/assets/diagrams/`; the relative
+README image link resolves within the generated site. All files and the SVG
+come from the same approved commit. The Mermaid source remains authoritative
+in OSDS; neither it nor `render_osds_federation.py` is executed or imported.
+Missing or checksum-mismatched SVG bytes stop the build.
+
+The default source is `../ecological-information/OSDS`; set `OSDS_SOURCE` to a
+checkout or bare repository containing the pinned commit when needed. Hosted
+builds require `OSDS_SOURCE`. GitHub Actions retrieves the exact approved public
+commit anonymously into `.sources/OSDS`, following EII's existing retrieval
+pattern. Updating OSDS main does not advance publication: a new pin and checksums
+require approval. No independent OSDS MkDocs site or shared runtime is added.
+
+Use the existing unittest and strict MkDocs build commands above, then preview
+`/information/OSDS/`, `/information/OSDS/research-guide/` and
+`/information/OSDS/machine-reference/`. Local integration does not deploy these
+routes. Committing/pushing the website or triggering its deployment workflow
+requires separate approval.
