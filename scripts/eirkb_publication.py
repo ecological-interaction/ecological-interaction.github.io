@@ -1,6 +1,7 @@
 """Import only approved EIRKB documents, pinned by commit and checksum."""
 
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -9,7 +10,15 @@ import subprocess
 
 from mkdocs.exceptions import ConfigurationError
 from mkdocs.structure.files import File
-from scripts.publication_diagrams import diagram_markup
+# MkDocs loads hooks by file path; resolve the helper independently of sys.path.
+_diagram_spec = importlib.util.spec_from_file_location(
+    "publication_diagrams", Path(__file__).with_name("publication_diagrams.py")
+)
+if _diagram_spec is None or _diagram_spec.loader is None:
+    raise ConfigurationError("Cannot load the adjacent publication diagram helper.")
+_diagram_module = importlib.util.module_from_spec(_diagram_spec)
+_diagram_spec.loader.exec_module(_diagram_module)
+diagram_markup = _diagram_module.diagram_markup
 
 ROOT = Path(__file__).resolve().parents[1]
 MARKER = "<!-- EIRKB_PREVIEW_LINK -->"
