@@ -153,3 +153,20 @@ class InformationPublicationTests(unittest.TestCase):
             self.assertTrue((site / "information/DRM/index.html").is_file())
             for name in ["AGENTS", "CHANGELOG"]:
                 self.assertFalse(list((site / "information").rglob(name + "*")))
+
+    def test_student_navigation_labels_preserve_database_routes(self):
+        config = yaml.safe_load((publication.ROOT / "mkdocs.yml").read_text())
+        information = next(item["Information"] for item in config["nav"] if "Information" in item)
+        groups = {name: pages for item in information for name, pages in item.items()}
+        expected = {
+            "Philosophical Approaches": ("EIRKB", ["index.md", "history-and-theory.md", "reference-register.md"]),
+            "Geographic Sources": ("GISDS", ["index.md", "research-guide.md"]),
+            "Ecological Indicators": ("EII", ["index.md", "research-guide.md", "machine-reference.md"]),
+            "Observation Systems": ("OSDS", ["index.md", "research-guide.md", "machine-reference.md"]),
+        }
+        self.assertEqual(set(groups), {"Overview", "DRM", *expected})
+        for label, (acronym, filenames) in expected.items():
+            self.assertEqual(
+                [route for entry in groups[label] for route in entry.values()],
+                [f"information/{acronym}/{name}" for name in filenames],
+            )
