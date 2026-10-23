@@ -29,7 +29,6 @@ class InformationPublicationTests(unittest.TestCase):
         content = {
             "README.md": b"# Research\n[DRM](DRM/README.md)\n![Diagram](assets/diagrams/federated-knowledge-systems.png)",
             "DRM/README.md": b"[Overview](../README.md)",
-            "ARCHITECTURE.md": b"[Overview](README.md) [History](REORGANISATION.json)",
             "assets/diagrams/federated_knowledge_systems.svg": b'<svg xmlns="http://www.w3.org/2000/svg"/>',
             "assets/diagrams/federated-knowledge-systems.png": b"\x89PNG\r\n\x1a\n\xff",
             "REORGANISATION.json": b'{"history": true}',
@@ -45,7 +44,6 @@ class InformationPublicationTests(unittest.TestCase):
         self.assertEqual(set(generated), set(publication.EXPECTED.values()))
         self.assertEqual(generated["information/index.md"], content["README.md"].decode().replace("DRM/README.md", "DRM/index.md"))
         self.assertEqual(generated["information/DRM/index.md"], "[Overview](../index.md)")
-        self.assertEqual(generated["information/architecture.md"], "[Overview](index.md) [History](REORGANISATION.json)")
         for name in ["REORGANISATION.json", "assets/diagrams/federated-knowledge-systems.png", "assets/diagrams/federated_knowledge_systems.svg"]:
             self.assertEqual(generated[publication.EXPECTED[name]], content[name])
 
@@ -82,7 +80,7 @@ class InformationPublicationTests(unittest.TestCase):
         import re
         import markdown
         data = publication.manifest()
-        self.assertEqual(data["commit"], "78795d7ac4de670ff56921b8aa4638cab4a40eec")
+        self.assertEqual(data["commit"], "a820b51c6f5ab695cbdf5c150499897b16a9d216")
         source = Path(os.environ.get("INFORMATION_SOURCE", str(publication.ROOT.parent / "ecological-information/ecological-information")))
         original = {item["source"]: publication.read_file(source, data["commit"], item) for item in data["files"]}
         generated = {}
@@ -94,10 +92,15 @@ class InformationPublicationTests(unittest.TestCase):
             publication.on_files([], SimpleNamespace())
         overview = generated["information/index.md"]
         self.assertTrue(overview.splitlines()[2].startswith("!["))
-        self.assertIn("](architecture.md)", overview)
-        self.assertIn("](DRM/index.md)", overview)
+        self.assertEqual(len(data["files"]), 5)
+        self.assertEqual(overview, original["README.md"].decode())
+        self.assertEqual(re.findall(r"^## (.+)$", overview, re.M), ["Research database directory", "Introduction"])
+        self.assertNotIn("information/architecture.md", generated)
+        self.assertNotIn("ARCHITECTURE.md", publication.EXPECTED)
+        self.assertNotIn("AGENTS.md", publication.EXPECTED)
+        self.assertNotIn("CHANGELOG.md", publication.EXPECTED)
+        self.assertIn("information/DRM/index.md", generated)
         self.assertEqual(len(re.findall(r"^\| \*\*", overview, re.M)), 9)
-        self.assertIn("[the Overview](index.md)", generated["information/architecture.md"])
         for name in ["assets/diagrams/federated_knowledge_systems.svg", "assets/diagrams/federated-knowledge-systems.png", "REORGANISATION.json"]:
             self.assertEqual(generated[publication.EXPECTED[name]], original[name])
         svg = original["assets/diagrams/federated_knowledge_systems.svg"].decode().lower()
@@ -105,7 +108,8 @@ class InformationPublicationTests(unittest.TestCase):
             self.assertIn(colour, svg)
         rendered = markdown.markdown(overview, extensions=["tables", "fenced_code"])
         self.assertLess(rendered.index("<h1>"), rendered.index("<img"))
-        self.assertLess(rendered.index("<img"), rendered.index("<h2>Introduction"))
+        self.assertLess(rendered.index("<img"), rendered.index("<h2>Research database directory"))
+        self.assertLess(rendered.index("<h2>Research database directory"), rendered.index("<h2>Introduction"))
 
     def test_overview_consolidation_keeps_directory_and_other_pages(self):
         from scripts import gisds_publication, eii_publication, osds_publication
@@ -120,10 +124,32 @@ class InformationPublicationTests(unittest.TestCase):
         self.assertEqual(publication.on_page_markdown(appended, page), appended)
         self.assertEqual(publication.on_page_markdown.mkdocs_priority, -100)
 
-    def test_architecture_navigation_and_hosted_validation_source(self):
+    def test_retired_architecture_navigation_and_hosted_validation_source(self):
         config = yaml.safe_load((publication.ROOT / "mkdocs.yml").read_text())
         information = next(item["Information"] for item in config["nav"] if "Information" in item)
-        self.assertIn({"Architecture and history": "information/architecture.md"}, information)
+        self.assertNotIn("information/architecture.md", str(information))
+        self.assertIn({"DRM": "information/DRM/index.md"}, information)
         workflow = yaml.load((publication.ROOT / ".github/workflows/deploy.yml").read_text(), Loader=yaml.BaseLoader)
         tests = next(s for s in workflow["jobs"]["deploy"]["steps"] if s["name"] == "Test publication import")
         self.assertIn("INFORMATION_SOURCE", tests["env"])
+
+    def test_clean_build_retires_architecture_and_preserves_drm(self):
+        import tempfile
+        from mkdocs.config import load_config
+        from mkdocs.commands.build import build
+        with tempfile.TemporaryDirectory(prefix="information-publication-test-") as output:
+            docs = Path(output) / "docs"
+            docs.mkdir()
+            config = load_config(
+                str(publication.ROOT / "mkdocs.yml"),
+                site_dir=str(Path(output) / "site"), docs_dir=str(docs),
+                hooks=[str(publication.ROOT / "scripts/information_publication.py")],
+                nav=[{"Overview": "information/index.md"}, {"DRM": "information/DRM/index.md"}],
+            )
+            build(config)
+            site = Path(output) / "site"
+            self.assertFalse((site / "information/architecture").exists())
+            self.assertFalse((site / "information/architecture.html").exists())
+            self.assertTrue((site / "information/DRM/index.html").is_file())
+            for name in ["AGENTS", "CHANGELOG"]:
+                self.assertFalse(list((site / "information").rglob(name + "*")))

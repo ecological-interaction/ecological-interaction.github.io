@@ -1,16 +1,11 @@
 {
   "repository": "https://github.com/ecological-interaction/ecological-information",
-  "commit": "78795d7ac4de670ff56921b8aa4638cab4a40eec",
+  "commit": "a820b51c6f5ab695cbdf5c150499897b16a9d216",
   "files": [
     {
       "source": "README.md",
       "page": "information/index.md",
-      "sha256": "f0d805484db4c3ba521b05a91a8086702442a92b7e5586acfe182df70f9cc1b6"
-    },
-    {
-      "source": "ARCHITECTURE.md",
-      "page": "information/architecture.md",
-      "sha256": "a634d893b16dada8b08f02c48a2717c55fbaeb65b2adefb1e1d200cfd922645c"
+      "sha256": "4a406cc9bb1415889328ba914d653257783d90043541ea7df7436927ffeab217"
     },
     {
       "source": "DRM/README.md",

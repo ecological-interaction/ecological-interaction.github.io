@@ -15,7 +15,6 @@ ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "https://github.com/ecological-interaction/ecological-information"
 EXPECTED = {
     "README.md": "information/index.md",
-    "ARCHITECTURE.md": "information/architecture.md",
     "DRM/README.md": "information/DRM/index.md",
     "assets/diagrams/federated-knowledge-systems.png":
         "information/assets/diagrams/federated-knowledge-systems.png",
@@ -65,9 +64,6 @@ def on_files(files, config):
             content = content.decode("utf-8")
             if item["source"] == "README.md":
                 content = content.replace("](DRM/README.md)", "](DRM/index.md)")
-                content = content.replace("](ARCHITECTURE.md)", "](architecture.md)")
-            elif item["source"] == "ARCHITECTURE.md":
-                content = content.replace("](README.md)", "](index.md)")
             else:
                 content = content.replace("](../README.md)", "](../index.md)")
         files.append(File.generated(config, item["page"], content=content))
