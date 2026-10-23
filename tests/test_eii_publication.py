@@ -32,10 +32,11 @@ class EIIPublicationTests(unittest.TestCase):
             return page
         with patch.dict(os.environ, {}, clear=True), \
                 patch.object(publication, "read_document", side_effect=lambda source, commit, item: item["source"]) as read, \
+                patch.object(publication, "read_file", return_value=b"<svg/>"), \
                 patch.object(publication.File, "generated", side_effect=generate):
             publication.on_files([], SimpleNamespace())
         self.assertEqual(read.call_count, 4)
-        self.assertEqual(set(generated), {publication.CATALOGUE, publication.GUIDE, publication.MACHINE})
+        self.assertEqual(set(generated), {publication.CATALOGUE, publication.GUIDE, publication.MACHINE, *publication.ASSETS.values()})
         self.assertEqual(generated[publication.CATALOGUE], "EII_Scientific_Reference_Register.md")
         self.assertEqual(generated[publication.GUIDE], "README.md")
         commit = publication.manifest()["commit"]

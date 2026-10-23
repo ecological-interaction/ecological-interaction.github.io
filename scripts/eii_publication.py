@@ -10,6 +10,7 @@ from urllib.parse import quote
 
 from mkdocs.exceptions import ConfigurationError
 from mkdocs.structure.files import File
+from scripts.publication_diagrams import diagram_markup
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "https://github.com/ecological-interaction/EII"
@@ -18,6 +19,7 @@ GUIDE = "information/EII/research-guide.md"
 MACHINE = "information/EII/machine-reference.md"
 EXPECTED = {"EII_Scientific_Reference_Register.md": CATALOGUE, "README.md": GUIDE}
 REFERENCES = {"EII_Machine_Reference.md", "EII - Remote Sensing.md"}
+ASSETS = {"assets/diagrams/eii_overview.svg": "information/EII/assets/diagrams/eii_overview.svg"}
 OVERVIEW_NAV = "\n\n[Browse the EII scientific catalogue and research guide](EII/index.md)\n"
 
 
@@ -27,21 +29,27 @@ def manifest():
         raise ConfigurationError("EII requires the approved repository and full commit SHA.")
     documents = data.get("documents", [])
     references = data.get("references", [])
+    assets = data.get("assets", [])
     if (len(documents) != 2 or {d["source"]: d["page"] for d in documents} != EXPECTED
             or len(references) != 2 or {d["source"] for d in references} != REFERENCES
-            or any(not re.fullmatch(r"[0-9a-f]{64}", d.get("sha256", "")) for d in documents + references)):
+            or len(assets) != 1 or {d["source"]: d["page"] for d in assets} != ASSETS
+            or any(not re.fullmatch(r"[0-9a-f]{64}", d.get("sha256", "")) for d in documents + references + assets)):
         raise ConfigurationError("Unexpected EII source allowlist or checksum.")
     return data
 
 
-def read_document(source, commit, item):
+def read_file(source, commit, item):
     result = subprocess.run(
         ["git", "--no-optional-locks", "-C", str(source), "show", f"{commit}:{item['source']}"],
         capture_output=True,
     )
     if result.returncode or hashlib.sha256(result.stdout).hexdigest() != item["sha256"]:
         raise ConfigurationError("EII source unavailable or checksum mismatch; check EII_SOURCE.")
-    return result.stdout.decode("utf-8")
+    return result.stdout
+
+
+def read_document(source, commit, item):
+    return read_file(source, commit, item).decode("utf-8")
 
 
 def source_url(data, name, raw=False):
@@ -84,13 +92,16 @@ def on_files(files, config):
     if os.environ.get("GITHUB_ACTIONS", "").lower() == "true" and not os.environ.get("EII_SOURCE", "").strip():
         raise ConfigurationError("Hosted builds require EII_SOURCE.")
     source = Path(os.environ.get("EII_SOURCE", str(ROOT.parent / "ecological-information/EII"))).expanduser()
-    if any(f.src_uri in {*EXPECTED.values(), MACHINE} for f in files):
+    if any(f.src_uri in {*EXPECTED.values(), *ASSETS.values(), MACHINE} for f in files):
         raise ConfigurationError("EII publication destination already exists.")
     # Verify linked references too, but do not import their large research bodies.
     for item in data["references"]:
         read_document(source, data["commit"], item)
     for item in data["documents"]:
         files.append(File.generated(config, item["page"], content=read_document(source, data["commit"], item)))
+    # Copy verified committed SVG bytes; never execute the source renderer.
+    for item in data["assets"]:
+        files.append(File.generated(config, item["page"], content=read_file(source, data["commit"], item)))
     files.append(File.generated(config, MACHINE, content=machine_access(data)))
     return files
 
@@ -111,5 +122,13 @@ def on_page_markdown(markdown, page, **kwargs):
     }.items():
         markdown = markdown.replace(f"]({name})", f"]({target})")
     if page.file.src_uri == CATALOGUE:
+        source = Path(os.environ.get("EII_SOURCE", str(ROOT.parent / "ecological-information/EII"))).expanduser()
+        guide = next(item for item in data["documents"] if item["source"] == "README.md")
+        diagram = diagram_markup(read_document(source, data["commit"], guide), next(iter(ASSETS)))
+        if markdown.startswith("# "):
+            title, newline, body = markdown.partition("\n")
+            markdown = title + "\n\n" + diagram + "\n" + body
+        else:
+            markdown = diagram + "\n\n" + markdown
         markdown = "[Research guide](research-guide.md) · [Authoritative machine reference](machine-reference.md)\n\n" + markdown
     return markdown

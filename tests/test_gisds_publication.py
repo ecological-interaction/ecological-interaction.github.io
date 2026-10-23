@@ -34,10 +34,11 @@ class GISDSPublicationTests(unittest.TestCase):
             return page
         with patch.dict(os.environ, {}, clear=True), \
                 patch.object(publication, "read_document", side_effect=lambda source, commit, item: item["source"]), \
+                patch.object(publication, "read_file", return_value=b"<svg/>"), \
                 patch.object(publication.File, "generated", side_effect=generate):
             files = publication.on_files([existing], SimpleNamespace())
         self.assertIs(files[0], existing)
-        self.assertEqual(generated, {publication.CATALOGUE: "GISDS.md", publication.GUIDE: "README.md"})
+        self.assertEqual(generated, {publication.CATALOGUE: "GISDS.md", publication.GUIDE: "README.md", next(iter(publication.ASSETS.values())): b"<svg/>"})
 
     def test_presentation_changes_only_framing_and_local_links(self):
         page = lambda uri: SimpleNamespace(file=SimpleNamespace(src_uri=uri))

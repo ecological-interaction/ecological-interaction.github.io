@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/ecological-interaction/GISDS",
-  "commit": "0e4a9348a3b58d5838f28aa1230569ea4c663457",
+  "commit": "e9bb37e19ee1d7b78f27eadad33d906de80b086e",
   "documents": [
     {
       "source": "GISDS.md",
@@ -10,7 +10,14 @@
     {
       "source": "README.md",
       "page": "information/GISDS/research-guide.md",
-      "sha256": "c93fc2793c21667ea2ee70e24555f95d0c9e9d9000d7e37bf779325173b67fc1"
+      "sha256": "532c0ac26ff0a81a6d22b2c4d7cd0c699c4e848d855075c340572a2e288a0873"
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/diagrams/gisds_overview.svg",
+      "page": "information/GISDS/assets/diagrams/gisds_overview.svg",
+      "sha256": "7174e48ba36ee8a1305bff351c6b42759d8f2188ac8f3f647754238256cf8d4a"
     }
   ]
 }

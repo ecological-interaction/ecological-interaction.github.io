@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/ecological-interaction/EIRKB",
-  "commit": "bbc7c0e755a2504a450272691aed6741af5aa6a7",
+  "commit": "d5a6a04e03b14903a81adbd347bbf57038b0e7a7",
   "documents": [
     {
       "source": "MASTER_history_theory_ecological_information.md",
@@ -11,6 +11,19 @@
       "source": "EIRKB Reference Register.md",
       "page": "information/EIRKB/reference-register.md",
       "sha256": "a1a0233f5c1e37d7ce540233425d05cfa2adbc1f929c7857225eeec4ca80fcc1"
+    }
+  ],
+  "references": [
+    {
+      "source": "README.md",
+      "sha256": "5649c2a0fc8f88bc904f420aacc5da8a9533b53bf4e3c9c465a03e4731604cda"
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/diagrams/eirkb_overview.svg",
+      "page": "information/EIRKB/assets/diagrams/eirkb_overview.svg",
+      "sha256": "30995aeebdb65a7898a66eed7db47b8eaad852d119e31b6c8e8d84a590c12471"
     }
   ]
 }

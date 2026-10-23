@@ -9,6 +9,7 @@ import subprocess
 
 from mkdocs.exceptions import ConfigurationError
 from mkdocs.structure.files import File
+from scripts.publication_diagrams import diagram_markup
 
 ROOT = Path(__file__).resolve().parents[1]
 MARKER = "<!-- EIRKB_PREVIEW_LINK -->"
@@ -18,7 +19,7 @@ WORKBOOK = "registers/ecological_information_complete_reference_register_v0.1.xl
 _manifest = None
 
 
-def read_document(source, commit, document):
+def read_file(source, commit, document):
     """Read committed bytes only; never execute or copy a source working tree."""
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise ConfigurationError("EIRKB publication requires a full commit SHA.")
@@ -34,7 +35,32 @@ def read_document(source, commit, document):
         )
     if hashlib.sha256(result.stdout).hexdigest() != document["sha256"]:
         raise ConfigurationError("EIRKB document checksum differs from the approved manifest.")
-    return result.stdout.decode("utf-8")
+    return result.stdout
+
+
+def read_document(source, commit, document):
+    return read_file(source, commit, document).decode("utf-8")
+
+
+ASSETS = {"assets/diagrams/eirkb_overview.svg": "information/EIRKB/assets/diagrams/eirkb_overview.svg"}
+
+
+def manifest(data=None):
+    if data is None:
+        data = json.loads((ROOT / "publications/eirkb.json").read_text())
+    expected = {
+        "MASTER_history_theory_ecological_information.md": "information/EIRKB/history-and-theory.md",
+        "EIRKB Reference Register.md": REGISTER,
+    }
+    documents, references, assets = (data.get(key, []) for key in ["documents", "references", "assets"])
+    if (data.get("repository") != "https://github.com/ecological-interaction/EIRKB"
+            or not re.fullmatch(r"[0-9a-f]{40}", data.get("commit", ""))
+            or len(documents) != 2 or {d["source"]: d["page"] for d in documents} != expected
+            or len(references) != 1 or {d["source"] for d in references} != {"README.md"}
+            or len(assets) != 1 or {d["source"]: d["page"] for d in assets} != ASSETS
+            or any(not re.fullmatch(r"[0-9a-f]{64}", d.get("sha256", "")) for d in documents + references + assets)):
+        raise ConfigurationError("Unexpected EIRKB repository, commit, allowlist or checksum.")
+    return data
 
 
 def on_config(config):
@@ -48,7 +74,7 @@ def on_config(config):
         )
     if hosted and not os.environ.get("EIRKB_SOURCE", "").strip():
         raise ConfigurationError("Hosted builds require the approved EIRKB checkout at EIRKB_SOURCE.")
-    _manifest = json.loads((ROOT / "publications/eirkb.json").read_text())
+    _manifest = manifest()
     if preview:
         config.site_dir = str(ROOT / "site-preview")
     return config
@@ -58,24 +84,23 @@ def on_files(files, config):
     source = Path(os.environ.get(
         "EIRKB_SOURCE", str(ROOT.parent / "ecological-information/EIRKB")
     )).expanduser()
-    documents = _manifest["documents"]
-    # Only the two approved research documents are eligible for import.
-    expected = {
-        "MASTER_history_theory_ecological_information.md":
-            "information/EIRKB/history-and-theory.md",
-        "EIRKB Reference Register.md": REGISTER,
-    }
-    if {d["source"]: d["page"] for d in documents} != expected or len(documents) != 2:
-        raise ConfigurationError("Unexpected EIRKB research-document allowlist.")
+    data = manifest(_manifest)
+    documents = data["documents"]
+    if any(f.src_uri in {*ASSETS.values(), INTRODUCTION, *(d["page"] for d in documents)} for f in files):
+        raise ConfigurationError("EIRKB publication destination already exists.")
     for document in documents:
         files.append(File.generated(
             config, document["page"],
             content=read_document(source, _manifest["commit"], document),
         ))
-    files.append(File.generated(
-        config, INTRODUCTION,
-        content=(ROOT / "publications/eirkb-introduction.md").read_text(),
-    ))
+    readme = read_document(source, data["commit"], data["references"][0])
+    diagram = diagram_markup(readme, next(iter(ASSETS)))
+    for item in data["assets"]:
+        files.append(File.generated(config, item["page"], content=read_file(source, data["commit"], item)))
+    introduction = (ROOT / "publications/eirkb-introduction.md").read_text()
+    introduction = re.sub(r"`[0-9a-f]{40}`", f"`{data['commit']}`", introduction, count=1)
+    title, newline, body = introduction.partition("\n")
+    files.append(File.generated(config, INTRODUCTION, content=title + "\n\n" + diagram + "\n" + body))
     return files
 
 

@@ -24,14 +24,17 @@ class EIRKBPublicationTests(unittest.TestCase):
     def test_normal_build_imports_only_the_approved_pages(self):
         with patch.dict(os.environ, {}, clear=True):
             config = publication.on_config(self.config())
-            with patch.object(publication, "read_document", return_value="# Research\n") as read, \
+            with patch.object(publication, "read_document", side_effect=lambda source, commit, item:
+                    "# Research\n\n![Diagram](assets/diagrams/eirkb_overview.svg)\n\n[View full-size diagram](assets/diagrams/eirkb_overview.svg).\n" if item["source"] == "README.md" else "# Research\n") as read, \
+                    patch.object(publication, "read_file", return_value=b"<svg/>"), \
                     patch.object(publication.File, "generated", side_effect=lambda cfg, uri, **kw: uri):
                 files = []
                 self.assertIs(publication.on_files(files, config), files)
-                self.assertEqual(read.call_count, 2)
+                self.assertEqual(read.call_count, 3)
             self.assertEqual(files, [
                 "information/EIRKB/history-and-theory.md",
                 publication.REGISTER,
+                next(iter(publication.ASSETS.values())),
                 publication.INTRODUCTION,
             ])
             self.assertIn("EIRKB", config.nav[0]["Information"][1])
@@ -92,7 +95,7 @@ class EIRKBPublicationTests(unittest.TestCase):
             page = SimpleNamespace(file=SimpleNamespace(src_uri=publication.REGISTER))
             text = f"[Source workbook]({publication.WORKBOOK})"
             result = publication.on_page_markdown(text, page)
-            self.assertIn("/blob/bbc7c0e755a2504a450272691aed6741af5aa6a7/", result)
+            self.assertIn(f"/blob/{publication.manifest()['commit']}/", result)
             self.assertTrue(result.endswith(f"/{publication.WORKBOOK})"))
 
     def test_unapproved_document_mapping_fails_before_reading_source(self):
