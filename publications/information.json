@@ -1,21 +1,31 @@
 {
   "repository": "https://github.com/ecological-interaction/ecological-information",
-  "commit": "c10e39b29dda883272b3ae501e8dfcf0f332c494",
+  "commit": "78795d7ac4de670ff56921b8aa4638cab4a40eec",
   "files": [
     {
       "source": "README.md",
       "page": "information/index.md",
-      "sha256": "c519e0160fe6148563137e086669317f6853c7d2d0a2350614c6268b782d3251"
+      "sha256": "f0d805484db4c3ba521b05a91a8086702442a92b7e5586acfe182df70f9cc1b6"
+    },
+    {
+      "source": "ARCHITECTURE.md",
+      "page": "information/architecture.md",
+      "sha256": "a634d893b16dada8b08f02c48a2717c55fbaeb65b2adefb1e1d200cfd922645c"
     },
     {
       "source": "DRM/README.md",
       "page": "information/DRM/index.md",
-      "sha256": "f54106aaf8d7882f981c5f4f41c3053ad46d2253f66e58d7d382df65e3667eab"
+      "sha256": "162a1c4f475cfe930e41cb332e5fced6f1e155c300695f66f05a931c04e79153"
     },
     {
       "source": "assets/diagrams/federated-knowledge-systems.png",
       "page": "information/assets/diagrams/federated-knowledge-systems.png",
       "sha256": "6e503a14bcc9243e3084cb445f675583049f29ccb63d8be4ae90d385f7fc5e1b"
+    },
+    {
+      "source": "assets/diagrams/federated_knowledge_systems.svg",
+      "page": "information/assets/diagrams/federated_knowledge_systems.svg",
+      "sha256": "2fe01bdeb452abd5eb5a535495f82b54381e4dd2a80db99a5eb8dfd765a6b859"
     },
     {
       "source": "REORGANISATION.json",

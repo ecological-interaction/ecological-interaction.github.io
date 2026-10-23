@@ -8,15 +8,19 @@ import re
 import subprocess
 
 from mkdocs.exceptions import ConfigurationError
+from mkdocs.plugins import event_priority
 from mkdocs.structure.files import File
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "https://github.com/ecological-interaction/ecological-information"
 EXPECTED = {
     "README.md": "information/index.md",
+    "ARCHITECTURE.md": "information/architecture.md",
     "DRM/README.md": "information/DRM/index.md",
     "assets/diagrams/federated-knowledge-systems.png":
         "information/assets/diagrams/federated-knowledge-systems.png",
+    "assets/diagrams/federated_knowledge_systems.svg":
+        "information/assets/diagrams/federated_knowledge_systems.svg",
     "REORGANISATION.json": "information/REORGANISATION.json",
 }
 
@@ -61,7 +65,26 @@ def on_files(files, config):
             content = content.decode("utf-8")
             if item["source"] == "README.md":
                 content = content.replace("](DRM/README.md)", "](DRM/index.md)")
+                content = content.replace("](ARCHITECTURE.md)", "](architecture.md)")
+            elif item["source"] == "ARCHITECTURE.md":
+                content = content.replace("](README.md)", "](index.md)")
             else:
                 content = content.replace("](../README.md)", "](../index.md)")
         files.append(File.generated(config, item["page"], content=content))
     return files
+
+
+# Run after the existing database hooks, without changing their source content.
+@event_priority(-100)
+def on_page_markdown(markdown, page, **kwargs):
+    if page.file.src_uri != "information/index.md":
+        return markdown
+    for project, addition in {
+        "GISDS": "\n\n---\n\n[Browse the GISDS catalogue and research guide](GISDS/index.md)\n",
+        "EII": "\n\n[Browse the EII scientific catalogue and research guide](EII/index.md)\n",
+        "OSDS": "\n\n[Browse the OSDS scientific catalogue and research guide](OSDS/index.md)\n",
+    }.items():
+        # Keep fallback links if a later source edition removes its directory link.
+        if f"](https://ecological-interaction.github.io/information/{project}/)" in markdown:
+            markdown = markdown.replace(addition, "")
+    return markdown

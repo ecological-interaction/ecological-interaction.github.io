@@ -20,6 +20,7 @@ nav:
   - Understanding: understanding/index.md
   - Information:
       - Overview: information/index.md
+      - Architecture and history: information/architecture.md
       - DRM: information/DRM/index.md
       - EIRKB:
           - Introduction: information/EIRKB/index.md

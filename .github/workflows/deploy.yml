@@ -179,6 +179,7 @@ jobs:
 
       - name: Test publication import
         env:
+          INFORMATION_SOURCE: ${{ github.workspace }}/.sources/ecological-information
           OSDS_SOURCE: ${{ github.workspace }}/.sources/OSDS
         run: uv run python -B -m unittest discover -s tests -v
 
