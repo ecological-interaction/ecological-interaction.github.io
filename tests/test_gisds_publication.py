@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from types import SimpleNamespace
 import unittest
+import tempfile
 from unittest.mock import patch
 
 from mkdocs.exceptions import ConfigurationError
@@ -76,7 +77,7 @@ class GISDSPublicationTests(unittest.TestCase):
         self.assertIn("INFORMATION_SOURCE", build["env"])
 
     def test_overview_catalogue_and_legacy_routes_preserve_source_content(self):
-        source = publication.ROOT.parent / "ecological-information/GISDS"
+        source = Path(os.environ.get("GISDS_SOURCE", str(publication.ROOT.parent / "ecological-information/GISDS"))).expanduser()
         data = publication.manifest()
         page = lambda uri: SimpleNamespace(file=SimpleNamespace(src_uri=uri))
         originals = {i["source"]: publication.read_document(source, data["commit"], i) for i in data["documents"]}
@@ -93,3 +94,14 @@ class GISDSPublicationTests(unittest.TestCase):
             self.assertIn('id="gisds"', notes)
             self.assertIn("## Dataset-level fields", notes)
             self.assertNotIn("gisds_overview.svg", notes)
+
+    def test_source_override_works_without_sibling_repository(self):
+        source = Path(os.environ.get("GISDS_SOURCE", str(publication.ROOT.parent / "ecological-information/GISDS"))).expanduser().resolve()
+        manifest_bytes = (publication.ROOT / "publications/gisds.json").read_bytes()
+        with tempfile.TemporaryDirectory(prefix="gisds-hosted-layout-") as directory:
+            root = Path(directory) / "website"
+            (root / "publications").mkdir(parents=True)
+            (root / "publications/gisds.json").write_bytes(manifest_bytes)
+            self.assertFalse((root.parent / "ecological-information/GISDS").exists())
+            with patch.object(publication, "ROOT", root), patch.dict(os.environ, {"GISDS_SOURCE": str(source)}):
+                self.test_overview_catalogue_and_legacy_routes_preserve_source_content()
