@@ -1,23 +1,28 @@
 {
   "repository": "https://github.com/ecological-interaction/GISDS",
-  "commit": "e9bb37e19ee1d7b78f27eadad33d906de80b086e",
+  "commit": "9ff8c1adb3929c2e4a619a1dc052f9764738c33f",
   "documents": [
     {
       "source": "GISDS.md",
-      "page": "information/GISDS/index.md",
+      "page": "information/GISDS/resource-catalogue.md",
       "sha256": "a6c86e21e2c27cf07c4f8ed6dddfe930b9a3c9f33dc17e20c98e65c140d01aff"
     },
     {
       "source": "README.md",
-      "page": "information/GISDS/research-guide.md",
-      "sha256": "532c0ac26ff0a81a6d22b2c4d7cd0c699c4e848d855075c340572a2e288a0873"
+      "page": "information/GISDS/index.md",
+      "sha256": "e4fd959ac45dccc28d33da8d0bc8fbb4866c31ed855d6b140bf2859edf652bff"
+    },
+    {
+      "source": "RESEARCH_NOTES.md",
+      "page": "information/GISDS/research-notes.md",
+      "sha256": "c1e35657430094866c90bd0db6045cdf74ab01707e51273c5753db56036f2aa3"
     }
   ],
   "assets": [
     {
       "source": "assets/diagrams/gisds_overview.svg",
       "page": "information/GISDS/assets/diagrams/gisds_overview.svg",
-      "sha256": "7174e48ba36ee8a1305bff351c6b42759d8f2188ac8f3f647754238256cf8d4a"
+      "sha256": "557c7d32d69e72238b5d9fc7e82cd6377ea4928a8b3e49e87dae2f99a21a241d"
     }
   ]
 }

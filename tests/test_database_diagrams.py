@@ -14,7 +14,7 @@ MODULES = {"EIRKB": eirkb_publication, "EII": eii_publication, "GISDS": gisds_pu
 COMMITS = {
     "EIRKB": "d5a6a04e03b14903a81adbd347bbf57038b0e7a7",
     "EII": "305fa767d0df1cc7d594f15fc5828eb47639508f",
-    "GISDS": "e9bb37e19ee1d7b78f27eadad33d906de80b086e",
+    "GISDS": "9ff8c1adb3929c2e4a619a1dc052f9764738c33f",
 }
 # Previously approved scientific editions must remain byte-for-byte unchanged.
 SCIENTIFIC_HASHES = {
@@ -58,19 +58,25 @@ class DatabaseDiagramTests(unittest.TestCase):
                 self.assertEqual(generated[asset["page"]], original[asset["source"]])
                 self.assertIsInstance(generated[asset["page"]], bytes)
                 self.assertEqual(hashlib.sha256(generated[asset["page"]]).hexdigest(), asset["sha256"])
-                diagram = diagram_markup(original["README.md"].decode(), asset["source"])
-                if name == "EIRKB":
-                    landing = generated[module.INTRODUCTION]
-                    self.assertIn(COMMITS[name], landing)
+                if name == "GISDS":
+                    landing = module.on_page_markdown(generated[module.GUIDE], SimpleNamespace(file=SimpleNamespace(src_uri=module.GUIDE)))
+                    self.assertIn(f"]({asset['source']})", landing)
+                    self.assertIn(f"[View full-size diagram]({asset['source']})", landing)
+                    self.assertNotIn("gisds_overview.svg", module.on_page_markdown(generated[module.CATALOGUE], SimpleNamespace(file=SimpleNamespace(src_uri=module.CATALOGUE))))
                 else:
-                    guide = generated[module.GUIDE]
-                    self.assertEqual(guide, original["README.md"].decode())
-                    self.assertIn(diagram, guide)
-                    page = SimpleNamespace(file=SimpleNamespace(src_uri=module.CATALOGUE))
-                    with patch.dict(os.environ, env):
-                        landing = module.on_page_markdown(generated[module.CATALOGUE], page)
-                self.assertIn(diagram, landing)
-                self.assertIn(f"[View full-size diagram]({asset['source']})", landing)
+                    diagram = diagram_markup(original["README.md"].decode(), asset["source"])
+                    if name == "EIRKB":
+                        landing = generated[module.INTRODUCTION]
+                        self.assertIn(COMMITS[name], landing)
+                    else:
+                        guide = generated[module.GUIDE]
+                        self.assertEqual(guide, original["README.md"].decode())
+                        self.assertIn(diagram, guide)
+                        page = SimpleNamespace(file=SimpleNamespace(src_uri=module.CATALOGUE))
+                        with patch.dict(os.environ, env):
+                            landing = module.on_page_markdown(generated[module.CATALOGUE], page)
+                    self.assertIn(diagram, landing)
+                    self.assertIn(f"[View full-size diagram]({asset['source']})", landing)
                 for item in data["documents"]:
                     if item["source"] != "README.md":
                         self.assertEqual(generated[item["page"]], original[item["source"]].decode())

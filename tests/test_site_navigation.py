@@ -103,7 +103,7 @@ class SiteNavigationTests(unittest.TestCase):
             '/information/EIRKB/history-and-theory/': 'History and Theory of Ecological Information',
             '/information/EIRKB/reference-register/': 'Reference Register',
             '/information/GISDS/': 'Geographic Sources',
-            '/information/GISDS/research-guide/': 'Research guide',
+            '/information/GISDS/resource-catalogue/': 'GISDS — Resource Catalogue',
             '/information/EII/': 'Ecological Indicators',
             '/information/EII/research-guide/': 'Research guide',
             '/information/EII/machine-reference/': 'Machine reference',

@@ -29,6 +29,12 @@ assert len(hooks) == 3
 asset = "assets/diagrams/example.svg"
 block = f"![Diagram]({asset})\n\n[View full-size diagram]({asset})."
 for hook in hooks:
+    assert callable(hook.on_files)
+    if Path(hook.__file__).name == "gisds_publication.py":
+        # GISDS publishes its README directly and no longer extracts the diagram.
+        assert hook.GUIDE == "information/GISDS/index.md"
+        assert not hasattr(hook, "diagram_markup")
+        continue
     assert Path(hook.diagram_markup.__code__.co_filename).resolve() == config_path.parent / "scripts/publication_diagrams.py"
     assert hook.diagram_markup("# Overview\n\n" + block + "\n", asset) == block
 assert str(config_path.parent) not in sys.path

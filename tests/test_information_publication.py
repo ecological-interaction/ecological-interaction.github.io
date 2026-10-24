@@ -161,7 +161,7 @@ class InformationPublicationTests(unittest.TestCase):
         groups = {name: pages for item in information if isinstance(item, dict) for name, pages in item.items()}
         expected = {
             "Philosophical Approaches": ("EIRKB", ["index.md", "history-and-theory.md", "reference-register.md"]),
-            "Geographic Sources": ("GISDS", ["index.md", "research-guide.md"]),
+            "Geographic Sources": ("GISDS", ["index.md", "resource-catalogue.md"]),
             "Ecological Indicators": ("EII", ["index.md", "research-guide.md", "machine-reference.md"]),
             "Observation Systems": ("OSDS", ["index.md", "research-guide.md", "machine-reference.md"]),
         }

@@ -1,7 +1,6 @@
 """Publish approved GISDS research and website-only navigation from committed bytes."""
 
 import hashlib
-import importlib.util
 import json
 import os
 from pathlib import Path
@@ -10,21 +9,13 @@ import subprocess
 
 from mkdocs.exceptions import ConfigurationError
 from mkdocs.structure.files import File
-# MkDocs loads hooks by file path; resolve the helper independently of sys.path.
-_diagram_spec = importlib.util.spec_from_file_location(
-    "publication_diagrams", Path(__file__).with_name("publication_diagrams.py")
-)
-if _diagram_spec is None or _diagram_spec.loader is None:
-    raise ConfigurationError("Cannot load the adjacent publication diagram helper.")
-_diagram_module = importlib.util.module_from_spec(_diagram_spec)
-_diagram_spec.loader.exec_module(_diagram_module)
-diagram_markup = _diagram_module.diagram_markup
-
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "https://github.com/ecological-interaction/GISDS"
-CATALOGUE = "information/GISDS/index.md"
-GUIDE = "information/GISDS/research-guide.md"
-EXPECTED = {"GISDS.md": CATALOGUE, "README.md": GUIDE}
+CATALOGUE = "information/GISDS/resource-catalogue.md"
+GUIDE = "information/GISDS/index.md"
+NOTES = "information/GISDS/research-notes.md"
+LEGACY_GUIDE = "information/GISDS/research-guide.md"
+EXPECTED = {"GISDS.md": CATALOGUE, "README.md": GUIDE, "RESEARCH_NOTES.md": NOTES}
 ASSETS = {"assets/diagrams/gisds_overview.svg": "information/GISDS/assets/diagrams/gisds_overview.svg"}
 OVERVIEW_NAV = "\n\n---\n\n[Browse the GISDS catalogue and research guide](GISDS/index.md)\n"
 
@@ -35,7 +26,7 @@ def manifest():
         raise ConfigurationError("GISDS requires the approved repository and full commit SHA.")
     entries = data.get("documents", [])
     assets = data.get("assets", [])
-    if len(assets) != 1 or {d["source"]: d["page"] for d in assets} != ASSETS or len(entries) != 2 or {d["source"]: d["page"] for d in entries} != EXPECTED or any(
+    if len(assets) != 1 or {d["source"]: d["page"] for d in assets} != ASSETS or len(entries) != 3 or {d["source"]: d["page"] for d in entries} != EXPECTED or any(
         not re.fullmatch(r"[0-9a-f]{64}", d.get("sha256", "")) for d in entries + assets
     ):
         raise ConfigurationError("Unexpected GISDS document allowlist or checksum.")
@@ -61,11 +52,14 @@ def on_files(files, config):
     if os.environ.get("GITHUB_ACTIONS", "").lower() == "true" and not os.environ.get("GISDS_SOURCE", "").strip():
         raise ConfigurationError("Hosted builds require GISDS_SOURCE.")
     source = Path(os.environ.get("GISDS_SOURCE", str(ROOT.parent / "ecological-information/GISDS"))).expanduser()
-    if any(f.src_uri in {*EXPECTED.values(), *ASSETS.values()} for f in files):
+    if any(f.src_uri in {*EXPECTED.values(), LEGACY_GUIDE, *ASSETS.values()} for f in files):
         raise ConfigurationError("GISDS publication destination already exists.")
     for item in data["documents"]:
         content = read_document(source, data["commit"], item)
         files.append(File.generated(config, item["page"], content=content))
+    # Preserve the old guide route and its heading fragments from pinned notes.
+    notes = next(item for item in data["documents"] if item["source"] == "RESEARCH_NOTES.md")
+    files.append(File.generated(config, LEGACY_GUIDE, content=read_document(source, data["commit"], notes)))
     # Copy verified committed SVG bytes; never execute the source renderer.
     for item in data["assets"]:
         files.append(File.generated(config, item["page"], content=read_file(source, data["commit"], item)))
@@ -77,16 +71,18 @@ def on_page_markdown(markdown, page, **kwargs):
         # Website navigation only: do not edit or duplicate the umbrella manuscript.
         return markdown + OVERVIEW_NAV
     if page.file.src_uri == CATALOGUE:
-        # The complete source table follows verbatim, without rewriting any cell.
+        # Keep every source table cell unchanged; the diagram belongs only to GUIDE.
+        return "# GISDS — Resource Catalogue\n\n[Geographic Sources Overview and research guide](index.md)\n\n" + markdown
+    if page.file.src_uri in {GUIDE, NOTES, LEGACY_GUIDE}:
         data = manifest()
-        source = Path(os.environ.get("GISDS_SOURCE", str(ROOT.parent / "ecological-information/GISDS"))).expanduser()
-        guide = next(item for item in data["documents"] if item["source"] == "README.md")
-        diagram = diagram_markup(read_document(source, data["commit"], guide), next(iter(ASSETS)))
-        return "# GISDS — Resource catalogue\n\n" + diagram + "\n\n[Research guide, academic attribution and reuse guidance](research-guide.md)\n\n" + markdown
-    if page.file.src_uri == GUIDE:
-        data = manifest()
-        markdown = markdown.replace("](GISDS.md)", "](index.md)")
+        for source_name, target in {"GISDS.md": "resource-catalogue.md", "README.md": "index.md", "RESEARCH_NOTES.md": "research-notes.md"}.items():
+            markdown = markdown.replace(f"]({source_name})", f"]({target})")
         for name in ["CITATION.cff", "CHANGELOG.md"]:
             markdown = markdown.replace(f"]({name})", f"]({data['repository']}/blob/{data['commit']}/{name})")
+        if page.file.src_uri == GUIDE:
+            # Retain the former catalogue heading and catalogue-link fragments.
+            markdown = markdown.replace("## Resource Catalogue\n", '<a id="gisds-resource-catalogue"></a>\n<a id="catalogue"></a>\n\n## Resource Catalogue\n')
+        else:
+            markdown = markdown.replace('\n\n', '\n\n<a id="gisds"></a>\n<a id="gisds-geographic-sources-overview"></a>\n\n[The concise Overview is the Geographic Sources landing page.](index.md)\n\n', 1)
         return markdown
     return markdown

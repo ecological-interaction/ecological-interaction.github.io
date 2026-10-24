@@ -87,11 +87,16 @@ Use the existing test/build commands above, then preview with
 ## GISDS publication
 
 `publications/gisds.json` pins the approved GISDS commit and checksums.
-`GISDS.md` supplies `/information/GISDS/` and `README.md` supplies its research
-guide. The source table is retained verbatim; only website navigation and guide
-link destinations are adapted. Citation and changelog links point to the same
-pinned GitHub commit. Provider datasets remain at their original external
-sources; no dataset download or research copy is hosted in this repository.
+`README.md` supplies the Geographic Sources Overview at `/information/GISDS/`.
+`GISDS.md` supplies its child `/information/GISDS/resource-catalogue/`, with
+all 25 source rows retained verbatim and no diagram. `RESEARCH_NOTES.md`
+supplies linked supporting guidance at `/information/GISDS/research-notes/`.
+The former `/information/GISDS/research-guide/` route retains the detailed notes
+and historical heading anchors. The former catalogue heading fragment remains
+on the Overview beside its catalogue link. Citation and changelog links point
+to the same pinned GitHub commit. The SVG is copied as verified bytes; the
+source renderer is never executed during publication. No preview override or
+uncommitted source is used by the production build.
 
 The importer adds a catalogue/guide navigation link after the imported
 Information overview without editing the umbrella manuscript. Existing
@@ -105,7 +110,7 @@ publication until a new manifest pin and checksums are approved.
 Use the existing tests and strict build above. Preview with
 `uv run --no-sync mkdocs serve --dev-addr 127.0.0.1:8000`, then open
 `http://127.0.0.1:8000/information/GISDS/` and
-`http://127.0.0.1:8000/information/GISDS/research-guide/`.
+`http://127.0.0.1:8000/information/GISDS/resource-catalogue/`.
 
 ## EII publication
 
