@@ -163,7 +163,7 @@ class InformationPublicationTests(unittest.TestCase):
             "Philosophical Approaches": ("EIRKB", ["index.md", "history-and-theory.md", "reference-register.md"]),
             "Geographic Sources": ("GISDS", ["index.md", "resource-catalogue.md"]),
             "Ecological Indicators": ("EII", ["index.md", "research-guide.md", "machine-reference.md"]),
-            "Observation Systems": ("OSDS", ["index.md", "research-guide.md", "machine-reference.md"]),
+            "Observational Systems and Data Sources": ("OSDS", ["index.md", "scientific-reference-register.md"]),
         }
         self.assertEqual(set(groups), {"DRM", *expected})
         for label, (acronym, filenames) in expected.items():

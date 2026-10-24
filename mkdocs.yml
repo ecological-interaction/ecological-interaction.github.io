@@ -43,10 +43,9 @@ nav:
           - information/EII/index.md
           - Research guide: information/EII/research-guide.md
           - Machine reference: information/EII/machine-reference.md
-      - Observation Systems:
+      - Observational Systems and Data Sources:
           - information/OSDS/index.md
-          - Research guide: information/OSDS/research-guide.md
-          - Machine reference: information/OSDS/machine-reference.md
+          - Scientific Reference Register: information/OSDS/scientific-reference-register.md
   - Computation: computation/index.md
   - Intelligence: intelligence/index.md
   - Infrastructure: infrastructure/index.md

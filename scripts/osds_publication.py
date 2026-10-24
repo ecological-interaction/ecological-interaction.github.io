@@ -8,15 +8,18 @@ import re
 import subprocess
 from urllib.parse import quote
 
+from markdown.extensions.toc import slugify
 from mkdocs.exceptions import ConfigurationError
 from mkdocs.structure.files import File
 
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "https://github.com/ecological-interaction/OSDS"
-CATALOGUE = "information/OSDS/index.md"
-GUIDE = "information/OSDS/research-guide.md"
+CATALOGUE = "information/OSDS/scientific-reference-register.md"
+GUIDE = "information/OSDS/index.md"
+NOTES = "information/OSDS/research-notes.md"
+LEGACY_GUIDE = "information/OSDS/research-guide.md"
 MACHINE = "information/OSDS/machine-reference.md"
-EXPECTED = {"OSDS_Scientific_Reference_Register.md": CATALOGUE, "README.md": GUIDE}
+EXPECTED = {"OSDS_Scientific_Reference_Register.md": CATALOGUE, "README.md": GUIDE, "RESEARCH_NOTES.md": NOTES}
 REFERENCES = {"OSDS_Machine_Reference.md"}
 ASSETS = {"assets/diagrams/osds_federation.svg": "information/OSDS/assets/diagrams/osds_federation.svg"}
 OVERVIEW_NAV = "\n\n[Browse the OSDS scientific catalogue and research guide](OSDS/index.md)\n"
@@ -29,7 +32,7 @@ def manifest():
     documents = data.get("documents", [])
     references = data.get("references", [])
     assets = data.get("assets", [])
-    if (len(documents) != 2 or {d["source"]: d["page"] for d in documents} != EXPECTED
+    if (len(documents) != 3 or {d["source"]: d["page"] for d in documents} != EXPECTED
             or len(references) != 1 or {d["source"] for d in references} != REFERENCES
             or len(assets) != len(ASSETS) or {a["source"]: a["page"] for a in assets} != ASSETS
             or any(not re.fullmatch(r"[0-9a-f]{64}", d.get("sha256", "")) for d in documents + references + assets)):
@@ -66,8 +69,8 @@ def machine_access(data):
         "Jonathan Minchin · Ecological Interaction · "
         "[ORCID 0000-0001-8152-1796](https://orcid.org/0000-0001-8152-1796).\n\n"
         "The machine reference is the authoritative complete scientific record. "
-        "The [Scientific Reference Register](index.md) is its human-readable academic "
-        "presentation; see the [research guide](research-guide.md) for scope, "
+        "The [Scientific Reference Register](scientific-reference-register.md) is its human-readable academic "
+        "presentation; see the [research guide](index.md) for scope, "
         "versions and outstanding editorial decisions.\n\n"
         f"- [View the authoritative machine-reference source]({source_url(data, machine)}).\n"
         f"- [Open the raw Markdown file]({source_url(data, machine, raw=True)}).\n\n"
@@ -89,13 +92,15 @@ def on_files(files, config):
     if os.environ.get("GITHUB_ACTIONS", "").lower() == "true" and not os.environ.get("OSDS_SOURCE", "").strip():
         raise ConfigurationError("Hosted builds require OSDS_SOURCE.")
     source = Path(os.environ.get("OSDS_SOURCE", str(ROOT.parent / "ecological-information/OSDS"))).expanduser()
-    if any(f.src_uri in {*EXPECTED.values(), *ASSETS.values(), MACHINE} for f in files):
+    if any(f.src_uri in {*EXPECTED.values(), *ASSETS.values(), MACHINE, LEGACY_GUIDE} for f in files):
         raise ConfigurationError("OSDS publication destination already exists.")
     # Verify linked references too, but do not import their large research bodies.
     for item in data["references"]:
         read_document(source, data["commit"], item)
     for item in data["documents"]:
         files.append(File.generated(config, item["page"], content=read_document(source, data["commit"], item)))
+    notes = next(item for item in data["documents"] if item["source"] == "RESEARCH_NOTES.md")
+    files.append(File.generated(config, LEGACY_GUIDE, content=read_document(source, data["commit"], notes)))
     # Import the approved bytes only; never execute the source diagram renderer.
     for item in data["assets"]:
         files.append(File.generated(config, item["page"], content=read_file(source, data["commit"], item)))
@@ -106,13 +111,15 @@ def on_files(files, config):
 def on_page_markdown(markdown, page, **kwargs):
     if page.file.src_uri == "information/index.md":
         return markdown + OVERVIEW_NAV
-    if page.file.src_uri not in {CATALOGUE, GUIDE}:
+    if page.file.src_uri not in {CATALOGUE, GUIDE, NOTES, LEGACY_GUIDE}:
         return markdown
     data = manifest()
     # Presentation-only link mapping; all academic text and table cells stay intact.
     for name, target in {
-        "OSDS_Scientific_Reference_Register.md": "index.md",
-        "OSDS_Machine_Reference.md": "machine-reference.md",
+        "OSDS_Scientific_Reference_Register.md": "scientific-reference-register.md",
+        "OSDS_Machine_Reference.md": source_url(data, "OSDS_Machine_Reference.md"),
+        "README.md": "index.md",
+        "RESEARCH_NOTES.md": "research-notes.md",
         "CITATION.cff": source_url(data, "CITATION.cff"),
         "CHANGELOG.md": source_url(data, "CHANGELOG.md"),
     }.items():
@@ -123,6 +130,15 @@ def on_page_markdown(markdown, page, **kwargs):
         lambda match: f"]({source_url(data, 'OSDS_Machine_Reference.md')}#{match.group(1)})",
         markdown,
     )
-    if page.file.src_uri == CATALOGUE:
-        markdown = "[Research guide](research-guide.md) · [Authoritative machine reference](machine-reference.md)\n\n" + markdown
+    if page.file.src_uri == GUIDE:
+        # Legacy scientific heading fragments now lead to the full-register link.
+        source = Path(os.environ.get("OSDS_SOURCE", str(ROOT.parent / "ecological-information/OSDS"))).expanduser()
+        item = next(d for d in data["documents"] if d["source"] == "OSDS_Scientific_Reference_Register.md")
+        science = read_document(source, data["commit"], item)
+        anchors = "".join(f'<a id="{slugify(heading.strip(), "-")}"></a>\n'
+                          for heading in re.findall(r"^#{1,6} (.+)$", science, re.M)
+                          if slugify(heading.strip(), "-") != "scientific-reference-register")
+        markdown = markdown.replace("## Scientific Reference Register\n", anchors + "\n## Scientific Reference Register\n")
+    elif page.file.src_uri in {NOTES, LEGACY_GUIDE}:
+        markdown = markdown.replace('\n\n', '\n\n<a id="observational-systems-and-data-sources-osds"></a>\n\n', 1)
     return markdown

@@ -107,9 +107,8 @@ class SiteNavigationTests(unittest.TestCase):
             '/information/EII/': 'Ecological Indicators',
             '/information/EII/research-guide/': 'Research guide',
             '/information/EII/machine-reference/': 'Machine reference',
-            '/information/OSDS/': 'Observation Systems',
-            '/information/OSDS/research-guide/': 'Research guide',
-            '/information/OSDS/machine-reference/': 'Machine reference',
+            '/information/OSDS/': 'Observational Systems and Data Sources',
+            '/information/OSDS/scientific-reference-register/': 'Scientific Reference Register',
         }
         anchors = self.nav.all(lambda n: n.tag == 'a' and not urlsplit(n.attrs.get('href', '')).fragment)
         for route, label in expected.items():

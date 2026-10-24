@@ -142,38 +142,31 @@ Run the publication tests and strict build above, then preview with
 ## OSDS publication
 
 `publications/osds.json` pins approved OSDS commit
-`bc9eafc67d0703c17cae40e56898ccb5d3e0f19a` and SHA-256 checksums.
-The Scientific Reference Register supplies `/information/OSDS/`; the source
-README supplies its `research-guide/` page. The `machine-reference/` page links
-to the authoritative machine Markdown and raw file at that same commit. Its
-checksum is verified, but its 62-record research body is not duplicated here.
-It contains 63 JSON fences inside Markdown, not a standalone JSON file.
+`48b5d7f131ae4b86557d4a7b58a1371cacd3cd6c` with SHA-256 checksums for three documents,
+one authoritative machine reference and one SVG. README.md supplies the Overview
+at `/information/OSDS/`; the Scientific Reference Register is its only sidebar
+child at `/information/OSDS/scientific-reference-register/`. Supporting notes
+are linked at `/information/OSDS/research-notes/`. The former `research-guide/`
+route preserves the detailed notes and heading anchors. Old scientific heading
+fragments on the landing page lead to its full-register link.
 
-Scientific record links preserve their `#src-NNN` fragments on the pinned GitHub
-machine source. Source tables, ordering, descriptions, classifications, provider
-URLs and candidate status remain unchanged; only local link destinations and
-website navigation are adapted. The Information overview gains an OSDS link
-without changing the umbrella manuscript or any existing publication pins.
-The research guide imports the README's federation illustration directly below
-its title. The manifest allowlists `assets/diagrams/osds_federation.svg` and
-imports its verified bytes to `information/OSDS/assets/diagrams/`; the relative
-README image link resolves within the generated site. All files and the SVG
-come from the same approved commit. The Mermaid source remains authoritative
-in OSDS; neither it nor `render_osds_federation.py` is executed or imported.
-Missing or checksum-mismatched SVG bytes stop the build.
+The legacy `machine-reference/` access page remains available without a sidebar
+entry. Machine source bodies are never copied into website pages. Scientific
+record links preserve all 62 `#src-NNN` fragments at the authoritative machine
+file in the same pinned GitHub commit. Local document link destinations are
+adapted; scientific tables, identifiers, source URLs and classifications remain
+unchanged. The compact SVG is verified and copied byte-for-byte. The Mermaid
+source and renderer are not imported or executed during builds.
 
-The default source is `../ecological-information/OSDS`; set `OSDS_SOURCE` to a
-checkout or bare repository containing the pinned commit when needed. Hosted
-builds require `OSDS_SOURCE`. GitHub Actions retrieves the exact approved public
-commit anonymously into `.sources/OSDS`, following EII's existing retrieval
-pattern. Updating OSDS main does not advance publication: a new pin and checksums
-require approval. No independent OSDS MkDocs site or shared runtime is added.
+Set `OSDS_SOURCE` to a checkout or bare repository containing the approved commit.
+The local fallback is `../ecological-information/OSDS`; hosted builds require
+an explicit source. GitHub Actions anonymously fetches the exact manifest pin
+into `.sources/OSDS`. Missing sources, commits, allowlisted documents or matching
+checksums stop the build. No temporary preview override is used in production.
 
-Use the existing unittest and strict MkDocs build commands above, then preview
-`/information/OSDS/`, `/information/OSDS/research-guide/` and
-`/information/OSDS/machine-reference/`. Local integration does not deploy these
-routes. Committing/pushing the website or triggering its deployment workflow
-requires separate approval.
+Run the existing unittest suite and strict MkDocs build, then preview normally
+with `uv run mkdocs serve` at `http://127.0.0.1:8000/information/OSDS/`.
+No unrelated source pins or deployment settings are changed.
 
 ## Website branding and section navigation
 

@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from types import SimpleNamespace
 import unittest
+import tempfile
 from unittest.mock import patch
 
 from mkdocs.exceptions import ConfigurationError
@@ -35,10 +36,10 @@ class OSDSPublicationTests(unittest.TestCase):
                 patch.object(publication.File, "generated", side_effect=generate), \
                 patch.object(publication, "read_file", return_value=b"<svg/>") as read_asset:
             publication.on_files([], SimpleNamespace())
-        self.assertEqual(read.call_count, 3)
+        self.assertEqual(read.call_count, 5)
         self.assertEqual(read_asset.call_count, 1)
         self.assertEqual(generated[next(iter(publication.ASSETS.values()))], b"<svg/>")
-        self.assertEqual(set(generated), {publication.CATALOGUE, publication.GUIDE, publication.MACHINE, *publication.ASSETS.values()})
+        self.assertEqual(set(generated), {publication.CATALOGUE, publication.GUIDE, publication.NOTES, publication.LEGACY_GUIDE, publication.MACHINE, *publication.ASSETS.values()})
         self.assertEqual(generated[publication.CATALOGUE], "OSDS_Scientific_Reference_Register.md")
         self.assertEqual(generated[publication.GUIDE], "README.md")
         commit = publication.manifest()["commit"]
@@ -52,8 +53,8 @@ class OSDSPublicationTests(unittest.TestCase):
         self.assertTrue(publication.on_page_markdown(table, page(publication.CATALOGUE)).endswith(table))
         guide = "[Science](OSDS_Scientific_Reference_Register.md) [Machine](OSDS_Machine_Reference.md) [Cite](CITATION.cff)"
         result = publication.on_page_markdown(guide, page(publication.GUIDE))
-        self.assertIn("[Science](index.md)", result)
-        self.assertIn("[Machine](machine-reference.md)", result)
+        self.assertIn("[Science](scientific-reference-register.md)", result)
+        self.assertIn(f"[Machine]({publication.source_url(publication.manifest(), 'OSDS_Machine_Reference.md')})", result)
         overview = "# Authoritative overview\n[GISDS](GISDS/index.md)"
         self.assertEqual(publication.on_page_markdown(overview, page("information/index.md")), overview + publication.OVERVIEW_NAV)
         self.assertEqual(publication.on_page_markdown(guide, page("information/GISDS/index.md")), guide)
@@ -109,7 +110,7 @@ class OSDSPublicationTests(unittest.TestCase):
         result = publication.on_page_markdown(original, page)
         data = publication.manifest()
         self.assertIn(publication.source_url(data, "OSDS_Machine_Reference.md") + "#src-062", result)
-        self.assertIn("[Machine](machine-reference.md)", result)
+        self.assertIn(f"[Machine]({publication.source_url(publication.manifest(), 'OSDS_Machine_Reference.md')})", result)
         self.assertIn(publication.source_url(data, "CHANGELOG.md"), result)
         unrelated = SimpleNamespace(file=SimpleNamespace(src_uri="information/EII/index.md"))
         self.assertEqual(publication.on_page_markdown(original, unrelated), original)
@@ -122,8 +123,9 @@ class OSDSPublicationTests(unittest.TestCase):
         svg = publication.read_file(source, data["commit"], item)
         self.assertIsInstance(svg, bytes)
         self.assertIn(b'OSDS', svg)
-        self.assertIn(b'Historical records', svg)
-        self.assertIn(b'IRKB', svg)
+        self.assertIn(b'Historical Instrumental Records', svg)
+        self.assertIn(b'width="1200" height="744"', svg)
+        self.assertIn(b'EII Indicator', svg)
         with patch.object(publication.subprocess, "run", return_value=SimpleNamespace(returncode=0, stdout=svg)) as run:
             self.assertEqual(publication.read_file(source, data["commit"], item), svg)
         self.assertIn(f"{data['commit']}:{item['source']}", run.call_args.args[0])
@@ -152,13 +154,8 @@ class OSDSPublicationTests(unittest.TestCase):
 
     def test_revised_federation_pin_checksums_and_guide_link(self):
         data = publication.manifest()
-        self.assertEqual(data["commit"], "059d417ba1c1131ba2a6653bf9f84da76e0ff63c")
-        expected = {
-            "README.md": "41ca326841c3f04ea6c540bf82fa6ebe80c79cda6853d010ac3e347702bff1db",
-            "assets/diagrams/osds_federation.svg": "4b9e645556d7670bc9e47d20a0dc24ea86656872cfdcbd9fb5f2a720b192fcc4",
-            "OSDS_Scientific_Reference_Register.md": "d35787175ecfe3cf7e4b28a8fca6d92c913f23097b754997e9465eec1bc11741",
-            "OSDS_Machine_Reference.md": "bfd8245d2d4772658badc6e5eefb711d02bd3e17ad8cfb77503916421bc751d4",
-        }
+        self.assertEqual(data["commit"], "48b5d7f131ae4b86557d4a7b58a1371cacd3cd6c")
+        expected = {'OSDS_Scientific_Reference_Register.md': 'd35787175ecfe3cf7e4b28a8fca6d92c913f23097b754997e9465eec1bc11741', 'README.md': 'd95460c2bf373696f7d07442dc72321bc0201e46ab3d2154a76246e8015ac8a7', 'RESEARCH_NOTES.md': 'ae42995e0e724afaef2d55148a4ae393a0b81f8b15166856ac462fdfa524fa5a', 'OSDS_Machine_Reference.md': 'bfd8245d2d4772658badc6e5eefb711d02bd3e17ad8cfb77503916421bc751d4', 'assets/diagrams/osds_federation.svg': 'ea345cb52c5c801c16ecd79303c012466f88a414e7fc91472ad134c07bc0f51d'}
         items = data["documents"] + data["references"] + data["assets"]
         self.assertEqual({item["source"]: item["sha256"] for item in items}, expected)
         source = Path(os.environ.get("OSDS_SOURCE", str(publication.ROOT.parent / "ecological-information/OSDS")))
@@ -172,7 +169,42 @@ class OSDSPublicationTests(unittest.TestCase):
         svg = generated[data["assets"][0]["page"]]
         self.assertEqual(svg, original["assets/diagrams/osds_federation.svg"])
         self.assertIsInstance(svg, bytes)
-        for colour in [b"#cce3f9", b"#e1daf0", b"#f0f7f2", b"#feeec9", b"#637286"]:
+        for colour in [b"#cce3f9", b"#e1daf0", b"#feeec9", b"#637286"]:
             self.assertIn(colour, svg)
         self.assertEqual(generated[publication.GUIDE], original["README.md"].decode())
         self.assertIn("[View full-size diagram](assets/diagrams/osds_federation.svg)", generated[publication.GUIDE])
+
+    def test_notes_and_legacy_routes_use_explicit_source(self):
+        source = Path(os.environ.get("OSDS_SOURCE", str(publication.ROOT.parent / "ecological-information/OSDS"))).expanduser().resolve()
+        manifest_bytes = (publication.ROOT / "publications/osds.json").read_bytes()
+        with tempfile.TemporaryDirectory(prefix="osds-hosted-layout-") as directory:
+            root = Path(directory) / "website"
+            (root / "publications").mkdir(parents=True)
+            (root / "publications/osds.json").write_bytes(manifest_bytes)
+            self.assertFalse((root.parent / "ecological-information/OSDS").exists())
+            with patch.object(publication, "ROOT", root), patch.dict(os.environ, {"OSDS_SOURCE": str(source)}):
+                self.test_revised_federation_pin_checksums_and_guide_link()
+                data = publication.manifest()
+                originals = {i["source"]: publication.read_document(source, data["commit"], i) for i in data["documents"]}
+                for uri in [publication.NOTES, publication.LEGACY_GUIDE]:
+                    result = publication.on_page_markdown(originals["RESEARCH_NOTES.md"], SimpleNamespace(file=SimpleNamespace(src_uri=uri)))
+                    self.assertIn('id="observational-systems-and-data-sources-osds"', result)
+                    self.assertIn("](index.md)", result)
+                overview = publication.on_page_markdown(originals["README.md"], SimpleNamespace(file=SimpleNamespace(src_uri=publication.GUIDE)))
+                self.assertIn("](scientific-reference-register.md)", overview)
+                self.assertIn("](research-notes.md)", overview)
+                self.assertIn('id="osds-scientific-reference-register"', overview)
+
+    def test_compact_diagram_contains_all_eight_unchanged_category_labels(self):
+        import xml.etree.ElementTree as ET
+        data = publication.manifest()
+        source = Path(os.environ.get("OSDS_SOURCE", str(publication.ROOT.parent / "ecological-information/OSDS"))).expanduser()
+        root = ET.fromstring(publication.read_file(source, data["commit"], data["assets"][0]))
+        labels = [node.text for node in root.findall('.//{http://www.w3.org/2000/svg}text')]
+        categories = ["IoT and Sensor Telemetry", "Scientific Monitoring", "Ground-Truth Observations", "Autonomous Observations", "Field Campaigns and Datasets", "Citizen Sensing", "Physical Computing", "Historical Instrumental Records"]
+        for label in categories:
+            self.assertEqual(labels.count(label), 1)
+        self.assertIn("DRM (output) Database Reference Methodology", labels)
+        self.assertIn("Analysis, Intelligence and Applications", labels)
+        self.assertIn("EII Indicator", labels)
+        self.assertEqual(root.attrib["viewBox"], "0 0 1200 744")

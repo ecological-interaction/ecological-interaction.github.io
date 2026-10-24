@@ -106,7 +106,7 @@ class DatabaseDiagramTests(unittest.TestCase):
     def test_approved_osds_pin_and_unchanged_umbrella_pin(self):
         root = eii_publication.ROOT
         for name, commit in {
-            "osds": "059d417ba1c1131ba2a6653bf9f84da76e0ff63c",
+            "osds": "48b5d7f131ae4b86557d4a7b58a1371cacd3cd6c",
             "information": "a820b51c6f5ab695cbdf5c150499897b16a9d216",
         }.items():
             self.assertEqual(json.loads((root / f"publications/{name}.json").read_text())["commit"], commit)
