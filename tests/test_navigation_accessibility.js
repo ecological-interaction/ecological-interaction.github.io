@@ -6,7 +6,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const source = fs.readFileSync(path.join(__dirname, '../docs/javascripts/navigation-accessibility.js'), 'utf8');
 
-function fixture(checked = false) {
+function fixture(checked = false, home = false) {
   const listeners = {};
   const attrs = {};
   const panel = { tagName: 'NAV', id: '', attrs: {}, setAttribute(k, v) { this.attrs[k] = v; } };
@@ -19,12 +19,17 @@ function fixture(checked = false) {
     addEventListener(k, fn) { this.listeners[k] = fn; },
     click() { this.clicks++; toggle.checked = !toggle.checked; listeners.change(); },
   };
+  const topic = { textContent: 'Home' };
   const document = {
     readyState: 'complete', querySelectorAll() { return [control]; },
-    getElementById(id) { return id === toggle.id ? toggle : null; },
+    querySelector() { return topic; },
+    getElementById(id) {
+      if (home && id === 'ecological-interaction') return { textContent: 'Ecological Interaction' };
+      return id === toggle.id ? toggle : null;
+    },
   };
   vm.runInNewContext(source, { document });
-  return { control, toggle, panel, listeners };
+  return { control, toggle, panel, listeners, topic };
 }
 function key(control, type, value, repeat = false) {
   const event = { type, key: value, repeat, prevented: false, stopped: false,
@@ -70,4 +75,9 @@ test('pointer/native checkbox changes update the control and panel together', ()
   listeners.change();
   assert.equal(control.attrs['aria-label'], 'Expand Information');
   assert.equal(panel.attrs['aria-expanded'], 'false');
+});
+
+test('the unlisted homepage retains its brand topic without altering other pages', () => {
+  assert.equal(fixture(false, true).topic.textContent, 'Ecological Interaction');
+  assert.equal(fixture(false, false).topic.textContent, 'Home');
 });

@@ -1,6 +1,10 @@
 /* Enhance Material's native section-index arrows; keep its links and checkbox navigation. */
 (() => {
   function enhanceNavigation() {
+    // A home page omitted from nav otherwise gets MkDocs' fallback "Home" topic.
+    const homeHeading = document.getElementById('ecological-interaction');
+    const topic = document.querySelector('[data-md-component="header-topic"] .md-ellipsis');
+    if (homeHeading && topic) topic.textContent = homeHeading.textContent.trim();
     document.querySelectorAll('.md-nav__container > label[for]').forEach(control => {
       const toggle = document.getElementById(control.htmlFor);
       const link = control.parentElement.querySelector('a');

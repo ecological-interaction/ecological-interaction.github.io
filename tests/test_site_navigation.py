@@ -71,10 +71,21 @@ class SiteNavigationTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.directory.cleanup()
 
-    def test_root_label_url_and_accessible_home_heading(self):
+    def test_no_sidebar_home_entry_and_header_logo_links_home(self):
         anchors = self.nav.all(lambda n: n.tag == 'a' and n.text().strip() == 'Ecological Interaction')
-        self.assertEqual(len(anchors), 1)
-        self.assertEqual(urljoin('https://example.test/', anchors[0].attrs['href']), 'https://example.test/')
+        self.assertEqual(len(anchors), 0)
+        for page in [self.site / 'index.html', self.site / 'information/EII/research-guide/index.html']:
+            document = Document(page.read_text()).root
+            logos = document.all(lambda n: n.tag == 'a' and has_class(n, 'md-logo'))
+            self.assertEqual(len(logos), 2)
+            for logo in logos:
+                self.assertEqual(logo.attrs['href'], '/')
+                self.assertEqual(logo.attrs['aria-label'], 'Ecological Interaction')
+                self.assertTrue(logo.all(lambda n: n.tag == 'img'))
+        top_list = next(n for n in self.nav.children if isinstance(n, Element) and n.tag == 'ul')
+        labels = [n.all(lambda child: child.tag == 'a')[0].text().strip()
+                  for n in top_list.children if isinstance(n, Element) and n.tag == 'li']
+        self.assertEqual(labels, ['Understanding', 'Information', 'Computation', 'Intelligence', 'Infrastructure', 'Generation'])
         article = self.document.all(lambda n: n.tag == 'article')[0]
         headings = article.all(lambda n: n.tag == 'h1')
         self.assertEqual(len(headings), 1)

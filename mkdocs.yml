@@ -11,6 +11,10 @@ theme:
   features:
     - navigation.indexes
 
+extra:
+  # Keep header and mobile-menu branding linked home without a sidebar entry.
+  homepage: /
+
 extra_css:
   - stylesheets/site.css
 extra_javascript:
@@ -24,7 +28,6 @@ hooks:
   - scripts/osds_publication.py
 
 nav:
-  - Ecological Interaction: index.md
   - Understanding: understanding/index.md
   - Information:
       - information/index.md
