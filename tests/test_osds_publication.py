@@ -149,3 +149,30 @@ class OSDSPublicationTests(unittest.TestCase):
                 publication.on_files([SimpleNamespace(src_uri=next(iter(publication.ASSETS.values())))], SimpleNamespace())
         source = "# Observational Systems and Data Sources (OSDS)\n\n![Federation](assets/diagrams/osds_federation.svg)\n"
         self.assertEqual(publication.on_page_markdown(source, SimpleNamespace(file=SimpleNamespace(src_uri=publication.GUIDE))), source)
+
+    def test_revised_federation_pin_checksums_and_guide_link(self):
+        data = publication.manifest()
+        self.assertEqual(data["commit"], "059d417ba1c1131ba2a6653bf9f84da76e0ff63c")
+        expected = {
+            "README.md": "41ca326841c3f04ea6c540bf82fa6ebe80c79cda6853d010ac3e347702bff1db",
+            "assets/diagrams/osds_federation.svg": "4b9e645556d7670bc9e47d20a0dc24ea86656872cfdcbd9fb5f2a720b192fcc4",
+            "OSDS_Scientific_Reference_Register.md": "d35787175ecfe3cf7e4b28a8fca6d92c913f23097b754997e9465eec1bc11741",
+            "OSDS_Machine_Reference.md": "bfd8245d2d4772658badc6e5eefb711d02bd3e17ad8cfb77503916421bc751d4",
+        }
+        items = data["documents"] + data["references"] + data["assets"]
+        self.assertEqual({item["source"]: item["sha256"] for item in items}, expected)
+        source = Path(os.environ.get("OSDS_SOURCE", str(publication.ROOT.parent / "ecological-information/OSDS")))
+        original = {item["source"]: publication.read_file(source, data["commit"], item) for item in items}
+        generated = {}
+        def generate(config, page, **kw):
+            generated[page] = kw["content"]
+            return page
+        with patch.dict(os.environ, {"OSDS_SOURCE": str(source)}), patch.object(publication.File, "generated", side_effect=generate):
+            publication.on_files([], SimpleNamespace())
+        svg = generated[data["assets"][0]["page"]]
+        self.assertEqual(svg, original["assets/diagrams/osds_federation.svg"])
+        self.assertIsInstance(svg, bytes)
+        for colour in [b"#cce3f9", b"#e1daf0", b"#f0f7f2", b"#feeec9", b"#637286"]:
+            self.assertIn(colour, svg)
+        self.assertEqual(generated[publication.GUIDE], original["README.md"].decode())
+        self.assertIn("[View full-size diagram](assets/diagrams/osds_federation.svg)", generated[publication.GUIDE])

@@ -97,10 +97,10 @@ class DatabaseDiagramTests(unittest.TestCase):
                 with self.assertRaises(ConfigurationError):
                     diagram_markup(text, asset)
 
-    def test_osds_and_umbrella_publication_pins_remain_unchanged(self):
+    def test_approved_osds_pin_and_unchanged_umbrella_pin(self):
         root = eii_publication.ROOT
         for name, commit in {
-            "osds": "bc9eafc67d0703c17cae40e56898ccb5d3e0f19a",
+            "osds": "059d417ba1c1131ba2a6653bf9f84da76e0ff63c",
             "information": "a820b51c6f5ab695cbdf5c150499897b16a9d216",
         }.items():
             self.assertEqual(json.loads((root / f"publications/{name}.json").read_text())["commit"], commit)

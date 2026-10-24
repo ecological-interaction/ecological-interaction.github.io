@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/ecological-interaction/OSDS",
-  "commit": "bc9eafc67d0703c17cae40e56898ccb5d3e0f19a",
+  "commit": "059d417ba1c1131ba2a6653bf9f84da76e0ff63c",
   "documents": [
     {
       "source": "OSDS_Scientific_Reference_Register.md",
@@ -10,7 +10,7 @@
     {
       "source": "README.md",
       "page": "information/OSDS/research-guide.md",
-      "sha256": "5253c5646a2e85e061785a85f37c9ff2875fdb5e775a33d861aeb8bc25cae9b9"
+      "sha256": "41ca326841c3f04ea6c540bf82fa6ebe80c79cda6853d010ac3e347702bff1db"
     }
   ],
   "references": [
@@ -23,7 +23,7 @@
     {
       "source": "assets/diagrams/osds_federation.svg",
       "page": "information/OSDS/assets/diagrams/osds_federation.svg",
-      "sha256": "08ead9119751fa37c34989b471d165359d0644d8aa78b723ee00a556f517c686"
+      "sha256": "4b9e645556d7670bc9e47d20a0dc24ea86656872cfdcbd9fb5f2a720b192fcc4"
     }
   ]
 }
