@@ -1,0 +1,140 @@
+"""Build actual Material output and check branding, routes and disclosure semantics."""
+from html.parser import HTMLParser
+from pathlib import Path
+import hashlib
+import os
+import shutil
+import subprocess
+import tempfile
+import unittest
+from urllib.parse import urljoin, urlsplit
+
+from mkdocs.config import load_config
+from mkdocs.commands.build import build
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class Element:
+    def __init__(self, tag, attrs=(), parent=None):
+        self.tag, self.attrs, self.parent = tag, dict(attrs), parent
+        self.children = []
+
+    def all(self, predicate):
+        result = [self] if predicate(self) else []
+        for child in self.children:
+            if isinstance(child, Element):
+                result.extend(child.all(predicate))
+        return result
+
+    def text(self):
+        return ''.join(c.text() if isinstance(c, Element) else c for c in self.children)
+
+
+class Document(HTMLParser):
+    def __init__(self, content):
+        super().__init__()
+        self.root = Element('document')
+        self.stack = [self.root]
+        self.feed(content)
+
+    def handle_starttag(self, tag, attrs):
+        node = Element(tag, attrs, self.stack[-1])
+        node.parent.children.append(node)
+        if tag not in {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'}:
+            self.stack.append(node)
+
+    def handle_endtag(self, tag):
+        for i in range(len(self.stack) - 1, 0, -1):
+            if self.stack[i].tag == tag:
+                self.stack = self.stack[:i]
+                break
+
+    def handle_data(self, data):
+        self.stack[-1].children.append(data)
+
+
+def has_class(node, name):
+    return name in node.attrs.get('class', '').split()
+
+
+class SiteNavigationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.directory = tempfile.TemporaryDirectory(prefix='ei-navigation-test-')
+        cls.site = Path(cls.directory.name) / 'site'
+        build(load_config(str(ROOT / 'mkdocs.yml'), site_dir=str(cls.site), strict=True))
+        cls.document = Document((cls.site / 'index.html').read_text()).root
+        cls.nav = cls.document.all(lambda n: n.tag == 'nav' and has_class(n, 'md-nav--primary'))[0]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.directory.cleanup()
+
+    def test_root_label_url_and_accessible_home_heading(self):
+        anchors = self.nav.all(lambda n: n.tag == 'a' and n.text().strip() == 'Ecological Interaction')
+        self.assertEqual(len(anchors), 1)
+        self.assertEqual(urljoin('https://example.test/', anchors[0].attrs['href']), 'https://example.test/')
+        article = self.document.all(lambda n: n.tag == 'article')[0]
+        headings = article.all(lambda n: n.tag == 'h1')
+        self.assertEqual(len(headings), 1)
+        self.assertEqual(headings[0].text(), 'Ecological Interaction')
+        self.assertTrue(has_class(headings[0], 'ei-visually-hidden'))
+        self.assertEqual([n.text() for n in article.all(lambda n: n.tag == 'h2')], ['Research Layers', 'Projects', 'Development'])
+        self.assertIn('Our work is organised into six interconnected research layers.', article.text())
+        self.assertEqual(self.document.all(lambda n: n.tag == 'title')[0].text(), 'Ecological Interaction')
+
+    def test_section_indexes_and_child_routes_have_no_duplicate_menu_entries(self):
+        expected = {
+            '/information/': 'Information',
+            '/information/DRM/': 'DRM',
+            '/information/EIRKB/': 'Philosophical Approaches',
+            '/information/EIRKB/history-and-theory/': 'History and Theory of Ecological Information',
+            '/information/EIRKB/reference-register/': 'Reference Register',
+            '/information/GISDS/': 'Geographic Sources',
+            '/information/GISDS/research-guide/': 'Research guide',
+            '/information/EII/': 'Ecological Indicators',
+            '/information/EII/research-guide/': 'Research guide',
+            '/information/EII/machine-reference/': 'Machine reference',
+            '/information/OSDS/': 'Observation Systems',
+            '/information/OSDS/research-guide/': 'Research guide',
+            '/information/OSDS/machine-reference/': 'Machine reference',
+        }
+        anchors = self.nav.all(lambda n: n.tag == 'a' and not urlsplit(n.attrs.get('href', '')).fragment)
+        for route, label in expected.items():
+            matching = [n for n in anchors if urlsplit(urljoin('https://example.test/', n.attrs['href'])).path == route]
+            self.assertEqual(len(matching), 1, route)
+            self.assertEqual(' '.join(matching[0].text().split()), label)
+            self.assertTrue((self.site / route.lstrip('/') / 'index.html').is_file())
+        for obsolete in ['Home', 'Overview', 'Introduction', 'Resource catalogue', 'Scientific catalogue']:
+            self.assertNotIn(obsolete, [n.text().strip() for n in anchors])
+
+    def test_native_disclosure_scaffolding_and_accessibility_script_are_present(self):
+        containers = self.nav.all(lambda n: n.tag == 'div' and has_class(n, 'md-nav__container'))
+        self.assertEqual(len(containers), 5)
+        for container in containers:
+            title = container.all(lambda n: n.tag == 'a')[0]
+            control = container.all(lambda n: n.tag == 'label')[0]
+            self.assertTrue(title.text().strip())
+            self.assertEqual(control.attrs['tabindex'], '0')
+            checkbox = self.nav.all(lambda n: n.tag == 'input' and n.attrs.get('id') == control.attrs['for'])
+            self.assertEqual(len(checkbox), 1)
+            self.assertEqual(checkbox[0].attrs['type'], 'checkbox')
+        scripts = self.document.all(lambda n: n.tag == 'script')
+        self.assertTrue(any(n.attrs.get('src', '').endswith('javascripts/navigation-accessibility.js') for n in scripts))
+        self.assertTrue((self.site / 'javascripts/navigation-accessibility.js').is_file())
+
+    def test_official_logo_is_loaded_and_preserved_exactly(self):
+        images = self.document.all(lambda n: n.tag == 'img')
+        matching = [n for n in images if n.attrs.get('src') == 'assets/branding/ecological-interaction-logo.png']
+        self.assertTrue(matching)
+        asset = self.site / 'assets/branding/ecological-interaction-logo.png'
+        self.assertEqual(asset.read_bytes(), (ROOT / 'docs/assets/branding/ecological-interaction-logo.png').read_bytes())
+        self.assertEqual(hashlib.sha256(asset.read_bytes()).hexdigest(), 'd265c8181b3c9a1eb4b5eb677ca9b5c99a27a82014de87ad1932157b8494de89')
+
+    def test_disclosure_names_state_and_keyboard_interaction(self):
+        node = os.environ.get('EI_TEST_NODE') or shutil.which('node')
+        if not node:
+            self.skipTest('Set EI_TEST_NODE or put Node.js on PATH to run disclosure interaction coverage.')
+        result = subprocess.run([node, '--test', str(ROOT / 'tests/test_navigation_accessibility.js')], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

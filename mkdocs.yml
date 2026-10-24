@@ -7,6 +7,14 @@ repo_name: ecological-interaction
 
 theme:
   name: material
+  logo: assets/branding/ecological-interaction-logo.png
+  features:
+    - navigation.indexes
+
+extra_css:
+  - stylesheets/site.css
+extra_javascript:
+  - javascripts/navigation-accessibility.js
 
 hooks:
   - scripts/eirkb_publication.py
@@ -16,24 +24,24 @@ hooks:
   - scripts/osds_publication.py
 
 nav:
-  - Home: index.md
+  - Ecological Interaction: index.md
   - Understanding: understanding/index.md
   - Information:
-      - Overview: information/index.md
+      - information/index.md
       - DRM: information/DRM/index.md
       - Philosophical Approaches:
-          - Introduction: information/EIRKB/index.md
+          - information/EIRKB/index.md
           - History and Theory of Ecological Information: information/EIRKB/history-and-theory.md
           - Reference Register: information/EIRKB/reference-register.md
       - Geographic Sources:
-          - Resource catalogue: information/GISDS/index.md
+          - information/GISDS/index.md
           - Research guide: information/GISDS/research-guide.md
       - Ecological Indicators:
-          - Scientific catalogue: information/EII/index.md
+          - information/EII/index.md
           - Research guide: information/EII/research-guide.md
           - Machine reference: information/EII/machine-reference.md
       - Observation Systems:
-          - Scientific catalogue: information/OSDS/index.md
+          - information/OSDS/index.md
           - Research guide: information/OSDS/research-guide.md
           - Machine reference: information/OSDS/machine-reference.md
   - Computation: computation/index.md

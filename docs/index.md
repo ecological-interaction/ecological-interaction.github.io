@@ -1,4 +1,8 @@
-# Ecological Interaction
+---
+description: Open ecological research, computation and design
+---
+
+<h1 class="ei-visually-hidden" id="ecological-interaction">Ecological Interaction</h1>
 
 Ecological Interaction develops open research, computational methods,
 and digital infrastructure for understanding and working with

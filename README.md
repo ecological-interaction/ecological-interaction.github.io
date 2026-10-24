@@ -169,3 +169,37 @@ Use the existing unittest and strict MkDocs build commands above, then preview
 `/information/OSDS/machine-reference/`. Local integration does not deploy these
 routes. Committing/pushing the website or triggering its deployment workflow
 requires separate approval.
+
+## Website branding and section navigation
+
+The header uses the official Ecological Interaction GitHub organisation avatar,
+retained without modification as `docs/assets/branding/ecological-interaction-logo.png`.
+Source: https://avatars.githubusercontent.com/u/342349500?v=4&s=512,
+verified against https://github.com/ecological-interaction on 24 October 2026.
+The returned original is a 460 × 460 RGBA PNG; SHA-256:
+`d265c8181b3c9a1eb4b5eb677ca9b5c99a27a82014de87ad1932157b8494de89`.
+The organisation profile and website repository supplied no separate vector logo
+or additional asset attribution. Do not replace the mark with a generated image.
+
+Material's supported `navigation.indexes` feature links Information and each
+nested database title to its existing `index.md`. The index is the first,
+unlabelled section item, so no duplicate Overview, Introduction or catalogue
+menu entry is rendered. Layers with only a landing page remain direct links;
+use the same section-index pattern if child pages are added later. No theme
+template override is required.
+
+Native testing confirmed separate title links and disclosure arrows, but the
+arrow labels had no accessible name and Space did not toggle consistently.
+`docs/javascripts/navigation-accessibility.js` progressively gives those native
+controls a button role, explicit name, controlled panel and synchronised expanded
+state, and handles Enter/Space once. Material still controls layout, mobile
+panels and checkbox navigation; all destination links remain native anchors.
+No instant-navigation feature is enabled. Recheck this small enhancement when
+upgrading Material. The home page retains a visually hidden h1, explicit metadata
+and its original body content; `docs/stylesheets/site.css` supplies the hiding
+and disclosure-focus styles.
+
+Navigation/branding regression tests build the real site. The disclosure
+interaction test uses Node.js' built-in test runner (no npm packages); Node is
+available on GitHub's Ubuntu runner. Locally, put Node on PATH or set
+`EI_TEST_NODE` to an existing executable when running the unittest suite.
