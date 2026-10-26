@@ -1,0 +1,76 @@
+{
+  "repository": "https://github.com/ecological-interaction/ecological-understanding",
+  "commit": "8382753a7e0df38e4fa2486b69fd96ad1ef370f8",
+  "files": [
+    {
+      "source": "README.md",
+      "page": "understanding/index.md",
+      "sha256": "41966bdef581cf5852bbb2ed739765eab86290dee103d749ac25b60c98472afe"
+    },
+    {
+      "source": "domains/EU-01-ecological-concepts-theory.md",
+      "page": "understanding/domains/EU-01-ecological-concepts-theory.md",
+      "sha256": "86e2ccd0be81939734b7eee7d3b57f3c0a8ff64a2a8ca8fc541c4e75a3f3610e"
+    },
+    {
+      "source": "domains/EU-02-observation-monitoring.md",
+      "page": "understanding/domains/EU-02-observation-monitoring.md",
+      "sha256": "9a3cd25c4c7051884aaab4a14d9ab1108024e1ac42c5f1f9ee1c874743be1323"
+    },
+    {
+      "source": "domains/EU-03-geographic-spatial-understanding.md",
+      "page": "understanding/domains/EU-03-geographic-spatial-understanding.md",
+      "sha256": "241b0f416e8d670364ac296b49e443d2d71baa77030f836039f5cb476ab084ca"
+    },
+    {
+      "source": "domains/EU-04-ecological-indicators-inference.md",
+      "page": "understanding/domains/EU-04-ecological-indicators-inference.md",
+      "sha256": "5655c8d6de664f1642f21894bd2c2a00549a6058ce690485892b0b04947df07c"
+    },
+    {
+      "source": "domains/EU-05-systems-science-relationships.md",
+      "page": "understanding/domains/EU-05-systems-science-relationships.md",
+      "sha256": "e11464963725ad60a252bf320378558947f3ebe389ddc50892c13f4fb6ce4ab6"
+    },
+    {
+      "source": "domains/EU-06-situated-cultural-knowledge.md",
+      "page": "understanding/domains/EU-06-situated-cultural-knowledge.md",
+      "sha256": "50e8f14b432291363eba550034be3a68740fd58efc7aae8fde945dff74e07bf9"
+    },
+    {
+      "source": "domains/EU-07-computation-intelligence.md",
+      "page": "understanding/domains/EU-07-computation-intelligence.md",
+      "sha256": "ce73051c51cc2444c943c39b1b60ed20442df7314dd76fbddfbffa4afeef85bf"
+    },
+    {
+      "source": "domains/EU-08-synthesis-decision-making.md",
+      "page": "understanding/domains/EU-08-synthesis-decision-making.md",
+      "sha256": "d340ee8043d874005324419413e6a79546b6d6b1adbe7c636d30ef822bca4130"
+    },
+    {
+      "source": "domains/EU-09-design-technology-choice.md",
+      "page": "understanding/domains/EU-09-design-technology-choice.md",
+      "sha256": "a9327aa95f3f9005a0de01320d2fb9fdf8e0cda8b43bd3054db4133d8fc20854"
+    },
+    {
+      "source": "domains/EU-10-regenerative-systems-practice.md",
+      "page": "understanding/domains/EU-10-regenerative-systems-practice.md",
+      "sha256": "f6bf35ef147e29118761f8841f8c9475d946249f8a6e477b26651a7f787f7119"
+    },
+    {
+      "source": "architecture/overview.md",
+      "page": "understanding/architecture/overview.md",
+      "sha256": "b3bab1d0ab6376056ccd4f0f26b8a35b239f9671fa100e5552742668eec221cd"
+    },
+    {
+      "source": "architecture/interface-specification.md",
+      "page": "understanding/architecture/interface-specification.md",
+      "sha256": "62d5f642bc3fbbd0ccf9b9ecd9eb5539ce313d67844d306298d46afb67c6631b"
+    },
+    {
+      "source": "inventory/README.md",
+      "page": "understanding/inventory/index.md",
+      "sha256": "b23eaf8a2b12141b76fc238c7fbdb0c04661706273c8cb24b7b048cd9135b8d3"
+    }
+  ]
+}

@@ -166,6 +166,34 @@ jobs:
           ], check=True)
           PYTHON
 
+      - name: Retrieve approved Understanding commit anonymously
+        env:
+          GIT_TERMINAL_PROMPT: "0"
+          GIT_ASKPASS: /bin/false
+          GIT_CONFIG_NOSYSTEM: "1"
+          GIT_CONFIG_GLOBAL: /dev/null
+        run: |
+          python3 - <<'PYTHON'
+          import json
+          from pathlib import Path
+          import re
+          import subprocess
+
+          data = json.loads(Path("publications/understanding.json").read_text())
+          repository = "https://github.com/ecological-interaction/ecological-understanding"
+          if data["repository"] != repository or not re.fullmatch(r"[0-9a-f]{40}", data["commit"]):
+              raise SystemExit("Unexpected Understanding repository or unapproved commit")
+          source = ".sources/ecological-understanding"
+          subprocess.run(["git", "init", "--initial-branch=main", source], check=True)
+          subprocess.run([
+              "git", "-C", source, "-c", "credential.helper=", "-c", "core.askPass=",
+              "-c", "http.extraHeader=", "fetch", "--depth=1", "--no-tags",
+              repository + ".git", data["commit"],
+          ], check=True)
+          # The checkout supports source metadata tests; production still reads Git objects.
+          subprocess.run(["git", "-C", source, "checkout", "--detach", data["commit"]], check=True)
+          PYTHON
+
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
@@ -179,6 +207,8 @@ jobs:
 
       - name: Test publication import
         env:
+          UNDERSTANDING_DRAFT_PREVIEW: "0"
+          UNDERSTANDING_SOURCE: ${{ github.workspace }}/.sources/ecological-understanding
           EIRKB_SOURCE: ${{ github.workspace }}/.sources/EIRKB
           EII_SOURCE: ${{ github.workspace }}/.sources/EII
           GISDS_SOURCE: ${{ github.workspace }}/.sources/GISDS
@@ -188,6 +218,8 @@ jobs:
 
       - name: Build website
         env:
+          UNDERSTANDING_DRAFT_PREVIEW: "0"
+          UNDERSTANDING_SOURCE: ${{ github.workspace }}/.sources/ecological-understanding
           EIRKB_SOURCE: ${{ github.workspace }}/.sources/EIRKB
           INFORMATION_SOURCE: ${{ github.workspace }}/.sources/ecological-information
           GISDS_SOURCE: ${{ github.workspace }}/.sources/GISDS

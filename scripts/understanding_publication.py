@@ -1,11 +1,15 @@
-"""Opt-in local Understanding preview. Production remains on the existing placeholder."""
+"""Publish checksum-verified Understanding Git content; keep drafts explicitly local."""
 import html
+import hashlib
+import json
 import os
 from pathlib import Path
 import posixpath
 import re
 import sys
-from urllib.parse import urlsplit
+import subprocess
+import tempfile
+from urllib.parse import urlsplit, quote
 
 from mkdocs.exceptions import ConfigurationError
 from mkdocs.structure.files import File, Files
@@ -18,6 +22,82 @@ from understanding_display import SUBJECTS, APPROACHES, approach_icon
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE = ROOT.parent / 'ecological-understanding/ecological-understanding'
 SUPPORT = ['architecture/overview.md', 'architecture/interface-specification.md', 'inventory/README.md']
+
+REPOSITORY = 'https://github.com/ecological-interaction/ecological-understanding'
+EXPECTED = {
+    "README.md": "understanding/index.md",
+    "domains/EU-01-ecological-concepts-theory.md": "understanding/domains/EU-01-ecological-concepts-theory.md",
+    "domains/EU-02-observation-monitoring.md": "understanding/domains/EU-02-observation-monitoring.md",
+    "domains/EU-03-geographic-spatial-understanding.md": "understanding/domains/EU-03-geographic-spatial-understanding.md",
+    "domains/EU-04-ecological-indicators-inference.md": "understanding/domains/EU-04-ecological-indicators-inference.md",
+    "domains/EU-05-systems-science-relationships.md": "understanding/domains/EU-05-systems-science-relationships.md",
+    "domains/EU-06-situated-cultural-knowledge.md": "understanding/domains/EU-06-situated-cultural-knowledge.md",
+    "domains/EU-07-computation-intelligence.md": "understanding/domains/EU-07-computation-intelligence.md",
+    "domains/EU-08-synthesis-decision-making.md": "understanding/domains/EU-08-synthesis-decision-making.md",
+    "domains/EU-09-design-technology-choice.md": "understanding/domains/EU-09-design-technology-choice.md",
+    "domains/EU-10-regenerative-systems-practice.md": "understanding/domains/EU-10-regenerative-systems-practice.md",
+    "architecture/overview.md": "understanding/architecture/overview.md",
+    "architecture/interface-specification.md": "understanding/architecture/interface-specification.md",
+    "inventory/README.md": "understanding/inventory/index.md"
+}
+SOURCE_ONLY = {'PROVENANCE.md', 'inventory/courseware-candidates.yaml'}
+_snapshot = None
+
+
+def manifest():
+    try:
+        data = json.loads((ROOT / 'publications/understanding.json').read_text())
+        entries = data['files']
+        if data['repository'] != REPOSITORY or not re.fullmatch(r'[0-9a-f]{40}', data['commit']):
+            raise ValueError('Expected the approved repository and a full commit SHA')
+        if (len(entries) != len(EXPECTED) or
+                {item['source']: item['page'] for item in entries} != EXPECTED or
+                any(not re.fullmatch(r'[0-9a-f]{64}', item['sha256']) for item in entries)):
+            raise ValueError('Unexpected publication allowlist or checksum')
+        return data
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        raise ConfigurationError(f'Invalid Understanding publication manifest: {exc}') from exc
+
+
+def read_pinned_file(source, commit, item):
+    result = subprocess.run(
+        ['git', '--no-optional-locks', '-C', str(source), 'show', f"{commit}:{item['source']}"],
+        capture_output=True,
+    )
+    if result.returncode or hashlib.sha256(result.stdout).hexdigest() != item['sha256']:
+        raise ConfigurationError('Understanding pinned source unavailable or checksum mismatch; check UNDERSTANDING_SOURCE. No draft fallback is permitted.')
+    return result.stdout
+
+
+def pinned_snapshot():
+    global _snapshot
+    if _snapshot is not None:
+        _snapshot.cleanup()
+        _snapshot = None
+    data = manifest()
+    if os.environ.get('GITHUB_ACTIONS', '').lower() == 'true' and not os.environ.get('UNDERSTANDING_SOURCE', '').strip():
+        raise ConfigurationError('Hosted builds require an explicit UNDERSTANDING_SOURCE checkout.')
+    snapshot = tempfile.TemporaryDirectory(prefix='understanding-pinned-')
+    try:
+        root = Path(snapshot.name)
+        for item in data['files']:
+            content = read_pinned_file(source_root(), data['commit'], item)
+            target = root / item['source']
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+    except Exception:
+        snapshot.cleanup()
+        raise
+    _snapshot = snapshot
+    return root
+
+
+def publication_root():
+    if draft_mode():
+        return source_root()
+    if _snapshot is None:
+        raise ConfigurationError('Understanding pinned source has not been validated.')
+    return Path(_snapshot.name)
 
 
 def draft_mode():
@@ -62,7 +142,8 @@ def publication_paths(root):
 
 def transform(text, rel, paths):
     # Keep audit evidence in the source repository; it has no public preview route.
-    text = re.sub(r'\[([^\]]+)\]\((?:courseware-candidates\.yaml|PROVENANCE\.md)\)', r'\1 (source-only audit record)', text)
+    if draft_mode():
+        text = re.sub(r'\[([^\]]+)\]\((?:courseware-candidates\.yaml|PROVENANCE\.md)\)', r'\1 (source-only audit record)', text)
     # Preview copies of internal architecture notes must not expose local paths.
     text = re.sub(r'/Users/[^\s`<>)]+', '[local source path]', text)
     def link(match):
@@ -72,7 +153,14 @@ def transform(text, rel, paths):
             return match.group(0)
         child = posixpath.normpath(posixpath.join(posixpath.dirname(rel), url.path))
         if child not in paths:
-            # Linked YAML/JSON examples are supplied as generated files below.
+            if not draft_mode():
+                if child not in SOURCE_ONLY:
+                    raise ConfigurationError(f'Unapproved Understanding link target: {child}')
+                destination = REPOSITORY + '/blob/' + manifest()['commit'] + '/' + quote(child, safe='/')
+                if url.fragment:
+                    destination += '#' + url.fragment
+                return f'[{label}]({destination})'
+            # Draft-only linked metadata examples are supplied as generated files below.
             destination = 'understanding/' + child
         else:
             destination = page_for(child)
@@ -116,18 +204,22 @@ def landing_cards(text, root, config):
 
 
 def on_config(config):
-    if not draft_mode():
-        return config
-    # Keep the default draft output separate from the deployable normal build.
-    if Path(config.site_dir).resolve() == (ROOT / 'site').resolve():
-        config.site_dir = str(ROOT / 'site-understanding-preview')
-    source = source_root()
-    try:
-        domains, records = validate_source(source)
-    except (ValueError, OSError) as exc:
-        raise ConfigurationError(f'Understanding source validation failed: {exc}') from exc
-    if records:
-        raise ConfigurationError('Resource publication requires a reviewed resource allowlist; this preview supports the foundational framework only.')
+    draft = draft_mode()
+    if draft:
+        if Path(config.site_dir).resolve() == (ROOT / 'site').resolve():
+            config.site_dir = str(ROOT / 'site-understanding-preview')
+        source = source_root()
+        try:
+            domains, records = validate_source(source)
+        except (ValueError, OSError) as exc:
+            raise ConfigurationError(f'Understanding source validation failed: {exc}') from exc
+        if records:
+            raise ConfigurationError('Resource publication requires a reviewed resource allowlist; this preview supports the foundational framework only.')
+    else:
+        source = pinned_snapshot()
+        domains = sorted((source / 'domains').glob('*.md'))
+        for path in domains:
+            check_domain(frontmatter(path))
     nav = ['understanding/index.md'] + [
         {frontmatter(path)['title']: page_for(str(path.relative_to(source)))} for path in domains
     ]
@@ -138,10 +230,8 @@ def on_config(config):
 
 
 def on_files(files, config):
-    if not draft_mode():
-        return files
-    root = source_root()
-    paths = publication_paths(root)
+    root = publication_root()
+    paths = publication_paths(root) if draft_mode() else set(EXPECTED)
     retained = Files([f for f in files if f.src_uri != 'understanding/index.md'])
     destinations = {page_for(p) for p in paths}
     if any(f.src_uri in destinations for f in retained):
@@ -152,13 +242,14 @@ def on_files(files, config):
             text = landing_cards(text, root, config)
         retained.append(File.generated(config, page_for(rel), content=text))
     # Publish linked metadata examples as downloads, never as catalogue records.
-    for rel in ('architecture/metadata.schema.json', 'architecture/programme-example.yaml'):
-        retained.append(File.generated(config, 'understanding/' + rel, content=(root / rel).read_bytes()))
+    if draft_mode():
+        for rel in ('architecture/metadata.schema.json', 'architecture/programme-example.yaml'):
+            retained.append(File.generated(config, 'understanding/' + rel, content=(root / rel).read_bytes()))
     return retained
 
 
 def on_page_context(context, page, **kwargs):
-    if draft_mode() and page.file.src_uri.startswith('understanding/'):
+    if page.file.src_uri.startswith('understanding/'):
         page.meta['description'] = 'Ecological Understanding: research, methods, education and applied practice.'
     return context
 

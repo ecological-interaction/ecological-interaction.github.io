@@ -122,12 +122,15 @@ class PreviewTests(unittest.TestCase):
             self.assertIs(publication.on_serve(server, None, None), server)
         server.watch.assert_called_once_with(str(SOURCE.resolve()))
 
-    def test_default_mode_retains_placeholder_and_navigation(self):
-        with patch.dict(os.environ, {'UNDERSTANDING_DRAFT_PREVIEW': '0'}):
-            config = self.config()
-            self.assertEqual(publication.on_config(config)['nav'][0], {'Understanding': 'understanding/index.md'})
+    def test_default_mode_imports_pinned_content_and_navigation(self):
+        with patch.dict(os.environ, {'UNDERSTANDING_DRAFT_PREVIEW': '0', 'UNDERSTANDING_SOURCE': str(SOURCE)}):
+            config = publication.on_config(self.config())
+            self.assertEqual(len(config['nav'][0]['Understanding']), 11)
             files = Files([File('understanding/index.md', config['docs_dir'], config['site_dir'], True)])
-            self.assertIs(publication.on_files(files, config), files)
+            generated = publication.on_files(files, config)
+            self.assertEqual(sum(f.src_uri == 'understanding/index.md' for f in generated), 1)
+            self.assertEqual(sum(f.src_uri.startswith('understanding/domains/') for f in generated), 10)
+            self.assertFalse(any(f.src_uri.endswith('.yaml') for f in generated))
 
     def test_hosted_preview_is_rejected(self):
         with patch.dict(os.environ, {'UNDERSTANDING_DRAFT_PREVIEW': '1', 'GITHUB_ACTIONS': 'true'}):

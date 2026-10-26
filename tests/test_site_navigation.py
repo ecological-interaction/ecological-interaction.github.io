@@ -140,7 +140,7 @@ class SiteNavigationTests(unittest.TestCase):
 
     def test_native_disclosure_scaffolding_and_accessibility_script_are_present(self):
         containers = self.nav.all(lambda n: n.tag == 'div' and has_class(n, 'md-nav__container'))
-        self.assertEqual(len(containers), 5)
+        self.assertEqual(len(containers), 6)
         for container in containers:
             title = container.all(lambda n: n.tag == 'a')[0]
             control = container.all(lambda n: n.tag == 'label')[0]

@@ -227,43 +227,56 @@ interaction test uses Node.js' built-in test runner (no npm packages); Node is
 available on GitHub's Ubuntu runner. Locally, put Node on PATH or set
 `EI_TEST_NODE` to an existing executable when running the unittest suite.
 
-## Local Understanding framework preview
+## Understanding publication and local review
 
-Normal builds retain the existing `/understanding/` placeholder. The Understanding
-hook imports no working-tree content unless explicitly enabled. Hosted GitHub
-Actions builds reject this mode; failures never fall back to another source.
-Production publication is not configured yet. The default draft build writes to
-`site-understanding-preview/`, separately from normal deployable output.
+`publications/understanding.json` pins the public organisation source repository,
+full commit SHA and SHA-256 hashes for 14 files: the README, ten domain pages,
+architecture overview, interface specification and candidate-inventory explanation.
+Normal builds read only these Git objects into an isolated temporary snapshot.
+Uncommitted source changes cannot affect production; missing commits or invalid
+checksums stop the build with no draft fallback. Source Markdown remains authoritative.
 
-The source repository is now located at
-`/Users/jonathan/Github/ecological-understanding/ecological-understanding`.
-GitHub Desktop may need **Locate** to find it after the directory rename.
-Historical paths in `PROVENANCE.md` are preserved unchanged.
+The landing page at `/understanding/` uses the approved compact cards, source-owned
+summaries, five subject classifications and four approach icons. Linked supporting
+pages are included; source-only provenance and raw inventory links target GitHub at
+the same exact commit. Local audit paths are redacted from rendered supporting
+pages. Synthetic examples and review packages do not enter production output.
+
+GitHub Actions anonymously fetches the exact selected commit into
+`.sources/ecological-understanding`, checks it out for source metadata tests, and
+sets `UNDERSTANDING_SOURCE` explicitly for tests and builds. Credential helpers,
+authentication headers, global Git configuration and interactive prompts are disabled
+for retrieval. No source code is executed. The importer reads verified Git objects,
+not the checkout files. Other research-layer publication pins remain independent.
+
+For a production-pinned local preview:
 
 ```sh
 uv sync --frozen
-uv run python scripts/understanding_validation.py /Users/jonathan/Github/ecological-understanding/ecological-understanding
 uv run python -B -m unittest discover -s tests -v
-uv run mkdocs build --strict
-UNDERSTANDING_DRAFT_PREVIEW=1 uv run mkdocs build --strict
-UNDERSTANDING_DRAFT_PREVIEW=1 uv run mkdocs serve --dev-addr 127.0.0.1:8000
+UNDERSTANDING_DRAFT_PREVIEW=0 uv run mkdocs build --strict
+UNDERSTANDING_DRAFT_PREVIEW=0 uv run mkdocs serve --dev-addr 127.0.0.1:8781
 ```
 
-Open `http://127.0.0.1:8000/understanding/`. An optional `UNDERSTANDING_SOURCE`
-override must point to a complete source tree. The default uses the renamed
-repository beside the website's parent directory. Draft mode imports source-owned
-Markdown, rewrites relative README links, supplies linked architecture examples,
-and presents ten foundational domain cards. Raw candidate and historical audit
-records remain source-only. There are no registered courseware resources, resource
-filters or programme assembly controls. New authored resources require a separate
-reviewed publication allowlist before this foundational preview can include them.
+Open `http://127.0.0.1:8781/understanding/`. `UNDERSTANDING_SOURCE` can override
+the default source Git repository at
+`/Users/jonathan/Github/ecological-understanding/ecological-understanding`; a bare
+repository also works for production import. Hosted builds require an explicit source.
 
-Validation uses declared PyYAML and JSON Schema Draft 2020-12 dependencies, with
-format checking, duplicate-key rejection, separate domain/inventory rules and
-resource relationship checks. Synthetic examples are checked for shape but never
-registered; the unresolved programme example deliberately fails publication graph
-checks. The website lockfile pins the complete development environment.
+For an isolated, opt-in working-tree draft preview:
 
-Before production publication, review and commit the source yourself, confirm its
-remote identity, and prepare an explicit commit/checksum allowlist and retrieval
-workflow in a later task. Existing Information publication manifests are unchanged.
+```sh
+UNDERSTANDING_DRAFT_PREVIEW=1 uv run mkdocs build --strict
+UNDERSTANDING_DRAFT_PREVIEW=1 uv run mkdocs serve --dev-addr 127.0.0.1:8780
+```
+
+The default draft build writes to `site-understanding-preview/`, separately from
+normal deployable `site/` output. Hosted GitHub Actions rejects draft mode. Drafts
+validate domains, separate candidate metadata and resource relationship graphs using
+PyYAML and JSON Schema Draft 2020-12 with format checking. Synthetic examples are
+shape-checked but never registered. No reviewed courseware records exist; adding
+real resources requires a separately reviewed publication allowlist.
+
+Source `main` advancing alone does not update the website. Review the exact source
+commit and checksums before changing this manifest. A website push to `main` triggers
+the existing Pages deployment workflow; keep publication changes unpushed until review.
