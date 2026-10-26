@@ -6,7 +6,8 @@ Public website and documentation index for Ecological Interaction research, soft
 EIRKB is imported from the exact commit and per-file SHA-256 checksums in
 `publications/eirkb.json`. Its README supplies `/information/EIRKB/`, including
 the federation diagram and complete References, Concepts and People Index tables.
-The student-facing navigation label remains Philosophical Approaches, with A01–A03
+DRM remains available at `/information/DRM/` through contextual links, outside
+the dropdown navigation. The student-facing EIRKB label remains Philosophical Approaches, with A01–A03
 as its only sidebar children. Scientific register, machine reference and research
 protocol routes remain available for compatibility, outside the sidebar. The source
 README introduction provides concise GitHub links to these three resources.
@@ -134,7 +135,7 @@ Consolidated Information Register, Observation Platforms and citation footer.
 Only working link destinations and compatibility anchors are adapted; source
 tables, wording, ordering and scientific qualifications remain source-owned.
 
-The Material section-index label is EII — Ecological Indicator Inventory. Its
+The Material section-index label is Indicator Inventory. Its
 only navigation children are EII — Remote Sensing (`remote-sensing/`) and
 EII — Observational Systems (`observational-systems/`). The latter preserves the
 approved empty research placeholder. `research-guide/` remains a compatibility

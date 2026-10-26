@@ -98,14 +98,13 @@ class SiteNavigationTests(unittest.TestCase):
     def test_section_indexes_and_child_routes_have_no_duplicate_menu_entries(self):
         expected = {
             '/information/': 'Information',
-            '/information/DRM/': 'DRM',
             '/information/EIRKB/': 'Philosophical Approaches',
             '/information/EIRKB/historic-arc/': 'Historic Arc',
             '/information/EIRKB/intellectual-lineages/': 'Intellectual Lineages',
             '/information/EIRKB/intellectual-map/': 'Intellectual Map',
             '/information/GISDS/': 'Geographic Sources',
             '/information/GISDS/resource-catalogue/': 'GISDS — Resource Catalogue',
-            '/information/EII/': 'EII — Ecological Indicator Inventory',
+            '/information/EII/': 'Indicator Inventory',
             '/information/EII/remote-sensing/': 'EII — Remote Sensing',
             '/information/EII/observational-systems/': 'EII — Observational Systems',
             '/information/OSDS/': 'Observational Systems and Data Sources',
@@ -126,8 +125,18 @@ class SiteNavigationTests(unittest.TestCase):
             route = f'/information/EII/{name}/'
             self.assertFalse(any(urlsplit(urljoin('https://example.test/', n.attrs['href'])).path == route for n in anchors))
             self.assertTrue((self.site / route.lstrip('/') / 'index.html').is_file())
+        self.assertFalse(any(urlsplit(urljoin('https://example.test/', n.attrs['href'])).path == '/information/DRM/' for n in anchors))
+        self.assertTrue((self.site / 'information/DRM/index.html').is_file())
         for obsolete in ['Home', 'Overview', 'Introduction', 'Resource catalogue', 'Scientific catalogue']:
             self.assertNotIn(obsolete, [n.text().strip() for n in anchors])
+
+    def test_updated_eirkb_introduction_and_supporting_links(self):
+        document = Document((self.site / 'information/EIRKB/index.html').read_text()).root
+        article = document.all(lambda n: n.tag == 'article')[0]
+        self.assertIn('EIRKB collects references, concepts and people concerned with the history and theory of ecological information', article.text())
+        links = article.all(lambda n: n.tag == 'a')
+        for label, filename in [('scientific register', 'EIRKB_Scientific_Reference_Register.md'), ('machine reference', 'EIRKB_Machine_Reference.json'), ('research protocol', 'EIRKB_Research_Protocol.md')]:
+            self.assertTrue(any(n.text() == label and n.attrs.get('href') == 'https://github.com/ecological-interaction/EIRKB/blob/main/' + filename for n in links))
 
     def test_native_disclosure_scaffolding_and_accessibility_script_are_present(self):
         containers = self.nav.all(lambda n: n.tag == 'div' and has_class(n, 'md-nav__container'))

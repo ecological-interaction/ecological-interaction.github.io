@@ -31,7 +31,6 @@ nav:
   - Understanding: understanding/index.md
   - Information:
       - information/index.md
-      - DRM: information/DRM/index.md
       - Philosophical Approaches:
           - information/EIRKB/index.md
           - Historic Arc: information/EIRKB/historic-arc.md
@@ -40,7 +39,7 @@ nav:
       - Geographic Sources:
           - information/GISDS/index.md
           - GISDS — Resource Catalogue: information/GISDS/resource-catalogue.md
-      - EII — Ecological Indicator Inventory:
+      - Indicator Inventory:
           - information/EII/index.md
           - EII — Remote Sensing: information/EII/remote-sensing.md
           - EII — Observational Systems: information/EII/observational-systems.md

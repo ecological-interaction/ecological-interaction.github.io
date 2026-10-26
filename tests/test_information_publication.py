@@ -128,7 +128,7 @@ class InformationPublicationTests(unittest.TestCase):
         config = yaml.safe_load((publication.ROOT / "mkdocs.yml").read_text())
         information = next(item["Information"] for item in config["nav"] if "Information" in item)
         self.assertNotIn("information/architecture.md", str(information))
-        self.assertIn({"DRM": "information/DRM/index.md"}, information)
+        self.assertNotIn("information/DRM/index.md", str(config["nav"]))
         workflow = yaml.load((publication.ROOT / ".github/workflows/deploy.yml").read_text(), Loader=yaml.BaseLoader)
         tests = next(s for s in workflow["jobs"]["deploy"]["steps"] if s["name"] == "Test publication import")
         self.assertIn("INFORMATION_SOURCE", tests["env"])
@@ -162,10 +162,10 @@ class InformationPublicationTests(unittest.TestCase):
         expected = {
             "Philosophical Approaches": ("EIRKB", ["index.md", "historic-arc.md", "intellectual-lineages.md", "intellectual-map.md"]),
             "Geographic Sources": ("GISDS", ["index.md", "resource-catalogue.md"]),
-            "EII — Ecological Indicator Inventory": ("EII", ["index.md", "remote-sensing.md", "observational-systems.md"]),
+            "Indicator Inventory": ("EII", ["index.md", "remote-sensing.md", "observational-systems.md"]),
             "Observational Systems and Data Sources": ("OSDS", ["index.md", "scientific-reference-register.md"]),
         }
-        self.assertEqual(set(groups), {"DRM", *expected})
+        self.assertEqual(set(groups), set(expected))
         for label, (acronym, filenames) in expected.items():
             self.assertEqual(
                 [entry if isinstance(entry, str) else next(iter(entry.values())) for entry in groups[label]],
