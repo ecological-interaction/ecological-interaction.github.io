@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/ecological-interaction/EIRKB",
-  "commit": "8416ba64aafc931a94f5c74a74723ef2e5964f8f",
+  "commit": "5c31c6599e928527417266132a242ee2095610de",
   "documents": [
     {
       "source": "README.md",
@@ -20,17 +20,17 @@
     {
       "source": "A01_Historic_Arc.md",
       "page": "information/EIRKB/historic-arc.md",
-      "sha256": "95c37d1b92093ab949951bd6c19de2da3e7136fbea1ff984a6047c91f85221b2"
+      "sha256": "8a27ab8c040d6589667f2b3168200ed5422a636a168f8576b997e577b117cdfc"
     },
     {
       "source": "A02_Intellectual_Lineages.md",
       "page": "information/EIRKB/intellectual-lineages.md",
-      "sha256": "15de0036c22a3f4f3be2518b50ed6cbde58dfc3dda5a350f9eabf034f02cb6e9"
+      "sha256": "b298385bf3aa9db8e07e8513b8cd516fd102539adbc66b264e104598f6f1e1cc"
     },
     {
       "source": "A03_Intellectual_Map.md",
       "page": "information/EIRKB/intellectual-map.md",
-      "sha256": "c1c585adf041d9bf3902ea815955769fd263605e3d2db504c84b10688be35499"
+      "sha256": "db8ed76d100a08f8f77eff03e93c59029f17f5d764319ac7af17d238da5a305a"
     },
     {
       "source": "MASTER_history_theory_ecological_information.md",

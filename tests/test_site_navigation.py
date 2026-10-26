@@ -3,6 +3,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 import hashlib
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -137,6 +138,29 @@ class SiteNavigationTests(unittest.TestCase):
         links = article.all(lambda n: n.tag == 'a')
         for label, filename in [('scientific register', 'EIRKB_Scientific_Reference_Register.md'), ('machine reference', 'EIRKB_Machine_Reference.json'), ('research protocol', 'EIRKB_Research_Protocol.md')]:
             self.assertTrue(any(n.text() == label and n.attrs.get('href') == 'https://github.com/ecological-interaction/EIRKB/blob/main/' + filename for n in links))
+
+    def test_pinned_analytical_pages_hide_historical_notes_and_preserve_research_structure(self):
+        for route, numbered, territories, subcategories in [
+            ('historic-arc', 20, 0, 0),
+            ('intellectual-lineages', 14, 0, 0),
+            ('intellectual-map', 0, 8, 101),
+        ]:
+            with self.subTest(route=route):
+                html = (self.site / f'information/EIRKB/{route}/index.html').read_text()
+                article = Document(html).root.all(lambda n: n.tag == 'article')[0]
+                text = article.text()
+                self.assertNotRegex(text, r'(?i)\b(your|you|I think|I would|we should|ChatGPT|assistant|next operation|editorial checkpoint|original section)\b')
+                self.assertIn('<!-- Historical', html)
+                headings = article.all(lambda n: n.tag == 'h3')
+                self.assertEqual(sum(bool(re.match(r'^\d+\.', n.text())) for n in headings), numbered)
+                self.assertEqual(sum(bool(re.match(r'^[A-H]\.', n.text())) for n in headings), territories)
+                self.assertEqual(sum(bool(re.match(r'^[A-H]\d+\.', n.text())) for n in article.all(lambda n: n.tag == 'h4')), subcategories)
+                images = article.all(lambda n: n.tag == 'img')
+                self.assertEqual(len(images), 1)
+                self.assertTrue(images[0].attrs.get('alt'))
+                if route == 'intellectual-map':
+                    self.assertIn('The map remains provisional', text)
+                    self.assertTrue(article.all(lambda n: n.attrs.get('id') == 'preserved-baseline-qualification'))
 
     def test_native_disclosure_scaffolding_and_accessibility_script_are_present(self):
         containers = self.nav.all(lambda n: n.tag == 'div' and has_class(n, 'md-nav__container'))
