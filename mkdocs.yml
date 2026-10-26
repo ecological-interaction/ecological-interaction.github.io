@@ -40,10 +40,10 @@ nav:
       - Geographic Sources:
           - information/GISDS/index.md
           - GISDS — Resource Catalogue: information/GISDS/resource-catalogue.md
-      - Ecological Indicators:
+      - EII — Ecological Indicator Inventory:
           - information/EII/index.md
-          - Research guide: information/EII/research-guide.md
-          - Machine reference: information/EII/machine-reference.md
+          - EII — Remote Sensing: information/EII/remote-sensing.md
+          - EII — Observational Systems: information/EII/observational-systems.md
       - Observational Systems and Data Sources:
           - information/OSDS/index.md
           - Scientific Reference Register: information/OSDS/scientific-reference-register.md

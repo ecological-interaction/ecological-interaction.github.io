@@ -1,33 +1,70 @@
 {
   "repository": "https://github.com/ecological-interaction/EII",
-  "commit": "305fa767d0df1cc7d594f15fc5828eb47639508f",
+  "commit": "76ea70afb2e755a541c63bd24cdade7de9c1f2ce",
   "documents": [
     {
-      "source": "EII_Scientific_Reference_Register.md",
+      "source": "README.md",
       "page": "information/EII/index.md",
-      "sha256": "ab703e447581478be0aae1ca0530210597063fd46625457f078ed6ac1fc921fb"
+      "sha256": "60b8dd67510750446b7026af9f3da2fd92225428438b8d48ca1e2f6101b88c96"
     },
     {
-      "source": "README.md",
-      "page": "information/EII/research-guide.md",
-      "sha256": "f6c3a45ad8814f9cb73268ba8f2bbc12a2ab50e79765f082aacf8b79a0c7a19a"
+      "source": "EII - Remote Sensing.md",
+      "page": "information/EII/remote-sensing.md",
+      "sha256": "d826e12a3ad2e3a84ef32417f907efa7f76c153268f3b3545a23041f5dccc6d8"
+    },
+    {
+      "source": "EII_Observational_Systems.md",
+      "page": "information/EII/observational-systems.md",
+      "sha256": "20b3eee992a9e31afe8252d7e0dbfdc801d707c6994da54f5fcd3c4bc012dfc3"
     }
   ],
   "references": [
     {
-      "source": "EII_Machine_Reference.md",
-      "sha256": "f2c2ebf4fbfc9ec12f3166b95aee0b8856cc85103142726ab60bf2a1897da1f4"
+      "source": "EII_Scientific_Reference_Register.md",
+      "sha256": "67932a9cd44ec2a680a3fd19d64e86b494ad5e7c1cb38e09ee2054ecf51da2d7"
     },
     {
-      "source": "EII - Remote Sensing.md",
-      "sha256": "ca050ccc7c4f09f4da8f30ba420ae2197780943c6fa827298980d4b6853d382d"
+      "source": "EII_Machine_Reference.json",
+      "sha256": "0446dd4d25b84ff9f7556775bad692b4b1152482bf140ef4dcdfd4100a839689"
+    },
+    {
+      "source": "EII_Research_Protocol.md",
+      "sha256": "c3a8f6be22e6a2d191c70da78525f5d3b6ec6e32d8aa886d96ebb74c17999dc5"
+    },
+    {
+      "source": "EII_Machine_Reference.md",
+      "sha256": "4db2d6891a0f82dd08d49dfbc1345511658866e9715a8783d9738d3aa0bb6423"
+    },
+    {
+      "source": "CITATION.cff",
+      "sha256": "38376b7141e97256c21a06b263e8b21132b2c3b8f4671a8c775c3ec36c4abdd9"
+    },
+    {
+      "source": "CHANGELOG.md",
+      "sha256": "cd5df1368a83954dbecb6d05e15cbc147092b5d2e01ec9f945b819ae67982c7d"
+    },
+    {
+      "source": "EII_Machine_Reference.schema.json",
+      "sha256": "fbc921f317225715dbf1b20dde79f980fe80a83f5acb44be2e20294a7da7a002"
+    },
+    {
+      "source": "EII_Preservation_Crosswalk.json",
+      "sha256": "af369978a5d29ec8bd2792efeab74f4cd98e850536ddc0ab96fe2d9e65ebdc5d"
+    },
+    {
+      "source": "assets/diagrams/eii_overview.mmd",
+      "sha256": "ceb2a37e311030feef8ce9c60f1dd36afb4a4c6b82a1978e7dc65eb98206b524"
+    },
+    {
+      "source": "assets/diagrams/render_eii_overview.py",
+      "sha256": "8151c4d415aa2780222a2e189b6a3c1d4cb8468dce5625eec878308e9995ba57"
     }
   ],
   "assets": [
     {
       "source": "assets/diagrams/eii_overview.svg",
       "page": "information/EII/assets/diagrams/eii_overview.svg",
-      "sha256": "ad8df6b6c7a8f1625826fb50e1ed17c794a2221c3b49cdac2b4ca30ffefe5ff2"
+      "sha256": "ce8fd6d5bbca54475d3e9ace515644e77df4a1a4f8cc9e589f226fad8905a349"
     }
   ]
 }

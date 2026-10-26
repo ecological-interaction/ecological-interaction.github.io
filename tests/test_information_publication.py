@@ -162,7 +162,7 @@ class InformationPublicationTests(unittest.TestCase):
         expected = {
             "Philosophical Approaches": ("EIRKB", ["index.md", "historic-arc.md", "intellectual-lineages.md", "intellectual-map.md"]),
             "Geographic Sources": ("GISDS", ["index.md", "resource-catalogue.md"]),
-            "Ecological Indicators": ("EII", ["index.md", "research-guide.md", "machine-reference.md"]),
+            "EII — Ecological Indicator Inventory": ("EII", ["index.md", "remote-sensing.md", "observational-systems.md"]),
             "Observational Systems and Data Sources": ("OSDS", ["index.md", "scientific-reference-register.md"]),
         }
         self.assertEqual(set(groups), {"DRM", *expected})

@@ -105,9 +105,9 @@ class SiteNavigationTests(unittest.TestCase):
             '/information/EIRKB/intellectual-map/': 'Intellectual Map',
             '/information/GISDS/': 'Geographic Sources',
             '/information/GISDS/resource-catalogue/': 'GISDS — Resource Catalogue',
-            '/information/EII/': 'Ecological Indicators',
-            '/information/EII/research-guide/': 'Research guide',
-            '/information/EII/machine-reference/': 'Machine reference',
+            '/information/EII/': 'EII — Ecological Indicator Inventory',
+            '/information/EII/remote-sensing/': 'EII — Remote Sensing',
+            '/information/EII/observational-systems/': 'EII — Observational Systems',
             '/information/OSDS/': 'Observational Systems and Data Sources',
             '/information/OSDS/scientific-reference-register/': 'Scientific Reference Register',
         }
@@ -120,6 +120,10 @@ class SiteNavigationTests(unittest.TestCase):
         # Corpus and protocol remain reachable at their compatibility routes, outside the menu.
         for name in ['scientific-reference-register', 'machine-reference', 'research-protocol']:
             route = f'/information/EIRKB/{name}/'
+            self.assertFalse(any(urlsplit(urljoin('https://example.test/', n.attrs['href'])).path == route for n in anchors))
+            self.assertTrue((self.site / route.lstrip('/') / 'index.html').is_file())
+        for name in ['research-guide', 'machine-reference']:
+            route = f'/information/EII/{name}/'
             self.assertFalse(any(urlsplit(urljoin('https://example.test/', n.attrs['href'])).path == route for n in anchors))
             self.assertTrue((self.site / route.lstrip('/') / 'index.html').is_file())
         for obsolete in ['Home', 'Overview', 'Introduction', 'Resource catalogue', 'Scientific catalogue']:

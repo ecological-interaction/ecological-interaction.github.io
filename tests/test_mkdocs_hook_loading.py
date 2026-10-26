@@ -30,14 +30,9 @@ asset = "assets/diagrams/example.svg"
 block = f"![Diagram]({asset})\n\n[View full-size diagram]({asset})."
 for hook in hooks:
     assert callable(hook.on_files)
-    if Path(hook.__file__).name in {"gisds_publication.py", "eirkb_publication.py"}:
-        # Both publish their pinned README directly; only EII extracts the diagram.
-        landing = hook.INTRODUCTION if Path(hook.__file__).name == "eirkb_publication.py" else hook.GUIDE
-        assert landing.endswith("/index.md")
-        assert not hasattr(hook, "diagram_markup")
-        continue
-    assert Path(hook.diagram_markup.__code__.co_filename).resolve() == config_path.parent / "scripts/publication_diagrams.py"
-    assert hook.diagram_markup("# Overview\n\n" + block + "\n", asset) == block
+    landing = {"eirkb_publication.py": "INTRODUCTION", "gisds_publication.py": "GUIDE", "eii_publication.py": "CATALOGUE"}[Path(hook.__file__).name]
+    assert getattr(hook, landing).endswith("/index.md")
+    assert not hasattr(hook, "diagram_markup")
 assert str(config_path.parent) not in sys.path
 print("All three diagram hooks loaded through MkDocs without the repository on sys.path.")
 '''

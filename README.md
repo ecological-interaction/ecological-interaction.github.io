@@ -127,30 +127,41 @@ Use the existing tests and strict build above. Preview with
 
 ## EII publication
 
-`publications/eii.json` pins EII's approved source commit. The scientific register
-and README are generated at `/information/EII/` and its `research-guide/` page.
-Only local link targets and website navigation are adapted; indicator tables,
-wording, classifications and scholarly references remain source-owned.
-The Information overview gains a website navigation link without changing its
-source manuscript or existing GISDS link.
+`publications/eii.json` pins the reviewed EII source revision and all imported or
+linked reference checksums. README.md supplies `/information/EII/` directly,
+including its single SVG, introduction, Reading Key, Domain Index, complete
+Consolidated Information Register, Observation Platforms and citation footer.
+Only working link destinations and compatibility anchors are adapted; source
+tables, wording, ordering and scientific qualifications remain source-owned.
 
-The `machine-reference/` page links to the full authoritative machine reference
-and raw Markdown at the same pinned commit. The remote-sensing subset is linked
-from the guide at that commit. Both source-only references have checksums in
-the manifest and are verified during builds; their research bodies are not
-copied into website source or rendered as duplicate registers. The machine file
-contains JSON fences inside Markdown and must not be parsed as standalone JSON.
+The Material section-index label is EII — Ecological Indicator Inventory. Its
+only navigation children are EII — Remote Sensing (`remote-sensing/`) and
+EII — Observational Systems (`observational-systems/`). The latter preserves the
+approved empty research placeholder. `research-guide/` remains a compatibility
+page linking to the landing page, while `machine-reference/` links to the JSON
+authority and human-readable Scientific Register on GitHub. Earlier landing and
+Research Guide anchors are retained without introducing duplicate menu entries.
 
-The local default source is `../ecological-information/EII`; `EII_SOURCE` can
-select another checkout or bare repository containing the approved commit.
-GitHub Actions retrieves it anonymously into `.sources/EII`. The existing
-Information, EIRKB and GISDS approval pins remain independent. Public access
-does not assign a licence or grant reuse permissions.
+The Scientific Register, JSON, Research Protocol, citation, changelog, schema,
+preservation crosswalk and old machine Markdown pointer are verified source-only
+references, not full website pages or duplicate hosted research corpora. README
+supporting-file GitHub links are pinned to the approved commit. Remote Sensing
+links to scientific records retain their fragments at that pinned GitHub source;
+links within the subset remain local. Encoded and unencoded space-containing
+filenames are mapped explicitly. Fenced code and inline-code provenance are not
+rewritten. Mermaid and renderer bytes are checksummed but never executed; the
+committed SVG is copied verbatim.
 
-Run the publication tests and strict build above, then preview with
-`uv run --no-sync mkdocs serve --dev-addr 127.0.0.1:8000` at
-`http://127.0.0.1:8000/information/EII/`, its `research-guide/` and
-`machine-reference/` pages. Review before committing or pushing.
+Set `EII_SOURCE` to an approved checkout or bare repository containing the exact
+manifest commit. The local fallback is `../ecological-information/EII`; hosted
+builds require the explicit source retrieved anonymously into `.sources/EII`.
+Missing sources, changed checksums, invalid JSON, unapproved paths or duplicate
+destinations reject the build. Source main advancing alone never advances a pin.
+Other database publications and the automatic deployment workflow are unchanged.
+
+Run the complete tests and strict build above, then preview with
+`uv run mkdocs serve --dev-addr 127.0.0.1:8000` at
+`http://127.0.0.1:8000/information/EII/`. Review before committing or pushing.
 
 ## OSDS publication
 
