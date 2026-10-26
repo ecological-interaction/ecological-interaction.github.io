@@ -30,9 +30,10 @@ asset = "assets/diagrams/example.svg"
 block = f"![Diagram]({asset})\n\n[View full-size diagram]({asset})."
 for hook in hooks:
     assert callable(hook.on_files)
-    if Path(hook.__file__).name == "gisds_publication.py":
-        # GISDS publishes its README directly and no longer extracts the diagram.
-        assert hook.GUIDE == "information/GISDS/index.md"
+    if Path(hook.__file__).name in {"gisds_publication.py", "eirkb_publication.py"}:
+        # Both publish their pinned README directly; only EII extracts the diagram.
+        landing = hook.INTRODUCTION if Path(hook.__file__).name == "eirkb_publication.py" else hook.GUIDE
+        assert landing.endswith("/index.md")
         assert not hasattr(hook, "diagram_markup")
         continue
     assert Path(hook.diagram_markup.__code__.co_filename).resolve() == config_path.parent / "scripts/publication_diagrams.py"

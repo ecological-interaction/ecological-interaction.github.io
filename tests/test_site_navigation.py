@@ -100,8 +100,9 @@ class SiteNavigationTests(unittest.TestCase):
             '/information/': 'Information',
             '/information/DRM/': 'DRM',
             '/information/EIRKB/': 'Philosophical Approaches',
-            '/information/EIRKB/history-and-theory/': 'History and Theory of Ecological Information',
-            '/information/EIRKB/reference-register/': 'Reference Register',
+            '/information/EIRKB/historic-arc/': 'Historic Arc',
+            '/information/EIRKB/intellectual-lineages/': 'Intellectual Lineages',
+            '/information/EIRKB/intellectual-map/': 'Intellectual Map',
             '/information/GISDS/': 'Geographic Sources',
             '/information/GISDS/resource-catalogue/': 'GISDS — Resource Catalogue',
             '/information/EII/': 'Ecological Indicators',
@@ -115,6 +116,11 @@ class SiteNavigationTests(unittest.TestCase):
             matching = [n for n in anchors if urlsplit(urljoin('https://example.test/', n.attrs['href'])).path == route]
             self.assertEqual(len(matching), 1, route)
             self.assertEqual(' '.join(matching[0].text().split()), label)
+            self.assertTrue((self.site / route.lstrip('/') / 'index.html').is_file())
+        # Corpus and protocol remain reachable at their compatibility routes, outside the menu.
+        for name in ['scientific-reference-register', 'machine-reference', 'research-protocol']:
+            route = f'/information/EIRKB/{name}/'
+            self.assertFalse(any(urlsplit(urljoin('https://example.test/', n.attrs['href'])).path == route for n in anchors))
             self.assertTrue((self.site / route.lstrip('/') / 'index.html').is_file())
         for obsolete in ['Home', 'Overview', 'Introduction', 'Resource catalogue', 'Scientific catalogue']:
             self.assertNotIn(obsolete, [n.text().strip() for n in anchors])

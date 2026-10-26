@@ -3,39 +3,51 @@ Public website and documentation index for Ecological Interaction research, soft
 
 ## EIRKB publication
 
-EIRKB research is imported from the full commit and document checksums in
-`publications/eirkb.json`. The independent EIRKB checkout remains authoritative;
-no editable copies of its research documents are stored in this website.
+EIRKB is imported from the exact commit and per-file SHA-256 checksums in
+`publications/eirkb.json`. Its README supplies `/information/EIRKB/`, including
+the federation diagram and complete References, Concepts and People Index tables.
+The student-facing navigation label remains Philosophical Approaches, with A01–A03
+as its only sidebar children. Scientific register, machine reference and research
+protocol routes remain available for compatibility, outside the sidebar. The source
+README introduction provides concise GitHub links to these three resources.
 
-Normal MkDocs builds include the approved EIRKB introduction, Master document
-and Reference Register. Using the existing uv environment, build locally:
+Reading routes include `scientific-reference-register/`, `research-protocol/`,
+`historic-arc/`, `intellectual-lineages/` and `intellectual-map/`.
+`machine-reference/` offers the authoritative `EIRKB_Machine_Reference.json`
+download; the original JSON bytes, schema, preservation crosswalk and CITATION.cff
+are copied without changes. Source Markdown remains authoritative for authored
+prose. No release, licence, DOI or DRM conformance is added by publication.
+
+The existing `reference-register/` route retains the scientific tables and
+bridges its historical Guide and Migration anchors to the protocol/changelog.
+`history-and-theory/` publishes the source compatibility index, with preserved
+historical heading and explicit-anchor links into A01–A03 and the changelog.
+Workbooks are not imported. Existing workbook links resolve to `_legacy registers/`
+at the same pinned GitHub commit; historical path strings in prose remain intact.
+
+Both reviewed SVGs are copied byte-for-byte. Their Mermaid sources and renderers
+are checksummed as source-only references, never executed or published as code.
+The former website-owned `publications/eirkb-introduction.md` template is retained
+as history but no longer supplies the landing page. No independent academic copy
+is maintained in website docs.
+
+Use the existing environment:
 
 ```sh
-uv run --no-sync mkdocs build --strict
+uv run python -B -m unittest discover -s tests -v
+uv run mkdocs build --strict
+uv run mkdocs serve --dev-addr 127.0.0.1:8000
 ```
 
-Then launch it at `http://127.0.0.1:8000/information/EIRKB/`:
+Preview at `http://127.0.0.1:8000/information/EIRKB/`. Set `EIRKB_SOURCE` to an
+approved checkout or bare repository when needed; hosted builds require it.
+The local fallback is `../ecological-information/EIRKB`. Reads always use the
+manifest commit, never uncommitted files. `EIRKB_PREVIEW=1` can isolate output in
+`site-preview/` locally and remains forbidden in GitHub Actions. Missing sources,
+checksums, unsupported destinations or invalid JSON reject the build.
 
-```sh
-uv run --no-sync mkdocs serve --dev-addr 127.0.0.1:8000
-```
-
-The default source location is the sibling `ecological-information/EIRKB`
-checkout. Set `EIRKB_SOURCE` to another local checkout if needed. Files are read
-from the pinned commit, never from uncommitted source edits. A missing commit or
-checksum mismatch stops the build. Normal output goes to `site/`. Optionally,
-`EIRKB_PREVIEW=1` isolates local preview output in `site-preview/`; it is not
-needed to include EIRKB and is rejected in GitHub Actions.
-
-The workflow retains automatic Pages deployment on pushes to `main`, plus manual
-dispatch. Once these changes are committed and pushed,
-that workflow will publish the selected EIRKB documents. Review locally and obtain
-publication approval before pushing. Advancing the EIRKB research branch does not
-change the published version: update the manifest's commit and checksums only
-after approving a new publication version.
-
-The source-workbook link is resolved to its pinned location in the public EIRKB
-repository. No workbook is imported.
+Other publication pins and deployment settings remain independent. Source main
+advancing alone does not change publication; a new pin/checksum approval is needed.
 
 ## GitHub Actions public-source access
 
@@ -47,9 +59,10 @@ deployment, independently of the public research-source retrieval.
 
 The workflow reads the selected SHA from the manifest, fetches that commit into
 the ignored `.sources/EIRKB` bare Git directory. It creates no research working
-tree; the importer reads only the two approved documents from that commit.
+tree; the importer reads only the explicitly allowlisted documents, downloads and
+source-only diagram references from that commit.
 Git objects remain outside `docs/` and
-`site/`; only the allowlisted Markdown enters the Pages artifact. No research
+`site/`; only allowlisted Markdown, assets and downloads enter the Pages artifact. No research
 code is executed, no source checkout is cached, and no workbook is imported.
 
 A failed public checkout, unavailable commit or checksum mismatch stops the workflow

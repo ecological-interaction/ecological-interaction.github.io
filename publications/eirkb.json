@@ -1,29 +1,96 @@
 {
   "repository": "https://github.com/ecological-interaction/EIRKB",
-  "commit": "d5a6a04e03b14903a81adbd347bbf57038b0e7a7",
+  "commit": "ec68ea37814adbc5903ccb0c9c30719045d07a82",
   "documents": [
+    {
+      "source": "README.md",
+      "page": "information/EIRKB/index.md",
+      "sha256": "e6854a9f35424811c826fcd1c485bb099f2819b175a321a53d5262d0cc3beabf"
+    },
+    {
+      "source": "EIRKB_Scientific_Reference_Register.md",
+      "page": "information/EIRKB/scientific-reference-register.md",
+      "sha256": "caa968d112c498839adb28ad241b0eed8795a869f5af628a2c581ce27b6bdb8e"
+    },
+    {
+      "source": "EIRKB_Research_Protocol.md",
+      "page": "information/EIRKB/research-protocol.md",
+      "sha256": "2549cdb644fed485f491db5cc917eda654d061199943a57b7fdf2ed10ebca73d"
+    },
+    {
+      "source": "A01_Historic_Arc.md",
+      "page": "information/EIRKB/historic-arc.md",
+      "sha256": "95c37d1b92093ab949951bd6c19de2da3e7136fbea1ff984a6047c91f85221b2"
+    },
+    {
+      "source": "A02_Intellectual_Lineages.md",
+      "page": "information/EIRKB/intellectual-lineages.md",
+      "sha256": "15de0036c22a3f4f3be2518b50ed6cbde58dfc3dda5a350f9eabf034f02cb6e9"
+    },
+    {
+      "source": "A03_Intellectual_Map.md",
+      "page": "information/EIRKB/intellectual-map.md",
+      "sha256": "c1c585adf041d9bf3902ea815955769fd263605e3d2db504c84b10688be35499"
+    },
     {
       "source": "MASTER_history_theory_ecological_information.md",
       "page": "information/EIRKB/history-and-theory.md",
-      "sha256": "5a162590b9cd3a117876f798c1356524d8e7a6a551ee4c591d3c271702b4fad1"
+      "sha256": "97a43d8a9feacaa9f3a5f8bca3b1ed7f0d2e0ac9e9d48fe568ea0adb5bf9b359"
     },
     {
-      "source": "EIRKB Reference Register.md",
-      "page": "information/EIRKB/reference-register.md",
-      "sha256": "a1a0233f5c1e37d7ce540233425d05cfa2adbc1f929c7857225eeec4ca80fcc1"
+      "source": "CHANGELOG.md",
+      "page": "information/EIRKB/changelog.md",
+      "sha256": "aa26386d7391a922f521269405720cab444b68b9af122b997f9741dd8989ac13"
     }
   ],
   "references": [
     {
-      "source": "README.md",
-      "sha256": "5649c2a0fc8f88bc904f420aacc5da8a9533b53bf4e3c9c465a03e4731604cda"
+      "source": "assets/diagrams/eirkb_federation.mmd",
+      "sha256": "5f761e8910d81d53c560ea7fa92da3ecc4e720943a3a0d76622b8cd3b6259ade"
+    },
+    {
+      "source": "assets/diagrams/render_eirkb_federation.py",
+      "sha256": "3aa03d3566f8c0ab1dbbaf70aa7d6e0e0c5ca7863ed089448c326387fa9c0de1"
+    },
+    {
+      "source": "assets/diagrams/eirkb_overview.mmd",
+      "sha256": "514bf637fd9cf2d2aa4bf3513ec989e55b2715dbeb4d3578437f7b774411ae38"
+    },
+    {
+      "source": "assets/diagrams/render_eirkb_overview.py",
+      "sha256": "2ff9d54ee5c98c80dd988d3e15b2b42fa18a9e0063785d212c9366fb7f17a893"
     }
   ],
   "assets": [
     {
+      "source": "assets/diagrams/eirkb_federation.svg",
+      "page": "information/EIRKB/assets/diagrams/eirkb_federation.svg",
+      "sha256": "1bea9c902dbb32c80e34a3841d9305de4b91ae3d60bd12dd073fd846c7963445"
+    },
+    {
       "source": "assets/diagrams/eirkb_overview.svg",
       "page": "information/EIRKB/assets/diagrams/eirkb_overview.svg",
       "sha256": "30995aeebdb65a7898a66eed7db47b8eaad852d119e31b6c8e8d84a590c12471"
+    },
+    {
+      "source": "EIRKB_Machine_Reference.json",
+      "page": "information/EIRKB/EIRKB_Machine_Reference.json",
+      "sha256": "f2427babb53954c57a42ce454d8165ad1f697ceaeae12ec3d97c7b3fd2831da9"
+    },
+    {
+      "source": "EIRKB_Machine_Reference.schema.json",
+      "page": "information/EIRKB/EIRKB_Machine_Reference.schema.json",
+      "sha256": "2dbf52b1d1463e556207c42cd10d857ca190cd09351156e1de79906c13b39e62"
+    },
+    {
+      "source": "EIRKB_Preservation_Crosswalk.json",
+      "page": "information/EIRKB/EIRKB_Preservation_Crosswalk.json",
+      "sha256": "a0bb224c7085e2351665a82f80fc1a689f17759560e4544879ba37d144488cd8"
+    },
+    {
+      "source": "CITATION.cff",
+      "page": "information/EIRKB/CITATION.cff",
+      "sha256": "589b097cbaad8b6c495d2193f522a134696c0bf46a3ec1a27b1bd93298915bd5"
     }
   ]
 }
