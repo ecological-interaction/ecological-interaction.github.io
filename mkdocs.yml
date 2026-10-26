@@ -17,6 +17,7 @@ extra:
 
 extra_css:
   - stylesheets/site.css
+  - stylesheets/computation.css
 extra_javascript:
   - javascripts/navigation-accessibility.js
 
