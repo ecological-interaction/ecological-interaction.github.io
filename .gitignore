@@ -3,3 +3,5 @@ __pycache__/
 site/
 site-preview/
 .sources/
+
+site-understanding-preview/

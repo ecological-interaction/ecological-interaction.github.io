@@ -16,3 +16,70 @@
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }
+
+/* Understanding domain cards. Material uses a 20px root at default zoom. */
+.eu-domain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  grid-auto-rows: 1fr;
+  gap: .7rem;
+  margin: .8rem 0;
+}
+.eu-domain-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: .9rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .3rem;
+  background: var(--md-default-bg-color);
+}
+.eu-domain-card .eu-domain-id {
+  margin: 0 0 .5rem;
+  font-size: .6rem;
+  line-height: 1.4;
+  letter-spacing: .04em;
+  color: var(--md-default-fg-color--light);
+}
+.eu-domain-card h3 {
+  margin: 0 0 .5rem;
+  font-size: .75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  min-height: 2.8em;
+}
+.eu-domain-card .eu-domain-summary {
+  margin: 0 0 1rem;
+  font-size: .65rem;
+  line-height: 1.55;
+}
+.eu-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .4rem .6rem;
+  margin-top: auto;
+  padding-top: .4rem;
+  font-size: .6rem;
+  line-height: 1.4;
+  color: var(--md-default-fg-color--light);
+}
+.eu-approach, .eu-subject { display: inline-flex; align-items: center; gap: .3rem; }
+.eu-subject { margin-left: auto; }
+.eu-approach svg { display: block; width: .8rem; height: .8rem; fill: currentColor; flex-shrink: 0; }
+.eu-dot { display: inline-block; width: .45rem; height: .45rem; flex-shrink: 0; border-radius: 50%; background: var(--eu-dot-colour); }
+.eu-domain-card a { color: var(--md-typeset-a-color); }
+.eu-domain-card a:hover { text-decoration: underline; }
+.eu-domain-card a:focus-visible { outline: 3px solid var(--md-accent-fg-color); outline-offset: 4px; }
+@media (max-width: 38.75rem) {
+  .eu-domain-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
+  .eu-domain-card h3 { min-height: 0; }
+}
+.eu-catalogue-notice {
+  padding: 1rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-left: 4px solid var(--md-primary-fg-color);
+  border-radius: .25rem;
+}
+.eu-catalogue-notice p { margin-bottom: 0; }

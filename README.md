@@ -226,3 +226,44 @@ Navigation/branding regression tests build the real site. The disclosure
 interaction test uses Node.js' built-in test runner (no npm packages); Node is
 available on GitHub's Ubuntu runner. Locally, put Node on PATH or set
 `EI_TEST_NODE` to an existing executable when running the unittest suite.
+
+## Local Understanding framework preview
+
+Normal builds retain the existing `/understanding/` placeholder. The Understanding
+hook imports no working-tree content unless explicitly enabled. Hosted GitHub
+Actions builds reject this mode; failures never fall back to another source.
+Production publication is not configured yet. The default draft build writes to
+`site-understanding-preview/`, separately from normal deployable output.
+
+The source repository is now located at
+`/Users/jonathan/Github/ecological-understanding/ecological-understanding`.
+GitHub Desktop may need **Locate** to find it after the directory rename.
+Historical paths in `PROVENANCE.md` are preserved unchanged.
+
+```sh
+uv sync --frozen
+uv run python scripts/understanding_validation.py /Users/jonathan/Github/ecological-understanding/ecological-understanding
+uv run python -B -m unittest discover -s tests -v
+uv run mkdocs build --strict
+UNDERSTANDING_DRAFT_PREVIEW=1 uv run mkdocs build --strict
+UNDERSTANDING_DRAFT_PREVIEW=1 uv run mkdocs serve --dev-addr 127.0.0.1:8000
+```
+
+Open `http://127.0.0.1:8000/understanding/`. An optional `UNDERSTANDING_SOURCE`
+override must point to a complete source tree. The default uses the renamed
+repository beside the website's parent directory. Draft mode imports source-owned
+Markdown, rewrites relative README links, supplies linked architecture examples,
+and presents ten foundational domain cards. Raw candidate and historical audit
+records remain source-only. There are no registered courseware resources, resource
+filters or programme assembly controls. New authored resources require a separate
+reviewed publication allowlist before this foundational preview can include them.
+
+Validation uses declared PyYAML and JSON Schema Draft 2020-12 dependencies, with
+format checking, duplicate-key rejection, separate domain/inventory rules and
+resource relationship checks. Synthetic examples are checked for shape but never
+registered; the unresolved programme example deliberately fails publication graph
+checks. The website lockfile pins the complete development environment.
+
+Before production publication, review and commit the source yourself, confirm its
+remote identity, and prepare an explicit commit/checksum allowlist and retrieval
+workflow in a later task. Existing Information publication manifests are unchanged.

@@ -21,6 +21,7 @@ extra_javascript:
   - javascripts/navigation-accessibility.js
 
 hooks:
+  - scripts/understanding_publication.py
   - scripts/eirkb_publication.py
   - scripts/information_publication.py
   - scripts/gisds_publication.py

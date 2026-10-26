@@ -6,6 +6,8 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "PyYAML==6.0.3",
+    "jsonschema[format]==4.25.1",
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.7.7",
 ]
