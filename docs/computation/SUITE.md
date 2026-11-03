@@ -1,6 +1,6 @@
 <!-- Generated from ecological-computation/SUITE.md; edit the source and rerun scripts/export_website.py. -->
 
-# Ecological Computing — suite coordination
+# Ecological Computation — suite coordination
 
 ## Workspace boundaries
 
@@ -17,7 +17,7 @@ environment, lockfile and Git history. Read its README, WORKSPACE.md,
 pyproject.toml and processing source before project development.
 
 This umbrella coordinates suite documentation and conventions.
-The containing ecological-computing directory is an ordinary
+The containing ecological-computation directory is an ordinary
 organisational directory.
 
 soil_organic_carbon is an existing empty ordinary directory.
@@ -207,7 +207,7 @@ These tasks are not implemented by establishing the umbrella.
 ## Shared publication direction
 
 Retain independent packages and commands, presented together under
-Ecological Computing.
+Ecological Computation.
 
 Align documentation structure, installation instructions, option
 meanings, output conventions, diagnostics, examples and release quality.

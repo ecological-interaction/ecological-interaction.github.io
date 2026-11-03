@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Documentation preparation — 3 November 2026
+
+- Regenerated Computation supporting-document snapshots from the authoritative umbrella after verified current-name, location and public-repository corrections. Preserved dated historical evidence, catalogue layout and navigation.
+- Local preparation only: no source publication pins, integrity manifests, research content or deployment configuration changed.
+
 ### Added — 3 November 2026
 
 - Pinned-source AMRKB and BIPKB overviews and Scientific Reference pages, with the approved AMRKB introductory SVG and both BIPKB SVGs preserved.

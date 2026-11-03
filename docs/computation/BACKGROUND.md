@@ -2,7 +2,7 @@
 
 # Ecological Computation — background
 
-Ecological Computing is the computational methods and data-processing
+Ecological Computation is the computational methods and data-processing
 domain of the Ecological Interaction ecosystem.
 
 Its purpose is to provide reusable tools for processing ecological
@@ -13,11 +13,11 @@ information through reproducible scientific workflows.
 Ecological Information organises research references, indicators,
 classifications, datasets and metadata.
 
-Ecological Computing processes data using explicit methods, input
+Ecological Computation processes data using explicit methods, input
 assumptions and output conventions. Computational outputs should retain
 enough provenance to connect them to their source data and method.
 
-Computing supports the wider ecosystem: Understanding teaches methods,
+Computation supports the wider ecosystem: Understanding teaches methods,
 Intelligence interprets results, Infrastructure enables access and
 deployment, and Generation uses methods and evidence to evaluate
 interventions.
@@ -67,7 +67,7 @@ configuration and local environment.
 This umbrella contains the domain catalogue and shared conventions.
 It does not contain copies of project source code or research datasets.
 
-The containing `ecological-computing/` directory is an ordinary
+The containing `ecological-computation/` directory is an ordinary
 organisational directory.
 
 Each project should remain independently downloadable and usable.
@@ -114,4 +114,4 @@ Functional repairs and scientific changes require separate development
 tasks. Establishing this umbrella does not modify processing algorithms.
 
 Licensing, repository citation metadata and publication arrangements
-remain to be agreed. The configured umbrella remote remains https://github.com/Jonathan-Minchin/ecological-computing.git; only the local directory has been renamed.
+remain to be agreed. The public umbrella repository is [ecological-interaction/ecological-computation](https://github.com/ecological-interaction/ecological-computation). LANDING.md distinguishes the current public destination from the retained legacy Git remote and historical locations.

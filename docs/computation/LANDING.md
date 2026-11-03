@@ -19,13 +19,22 @@ authored catalogues. No new website dependency or JavaScript is needed.
 After editing the source, regenerate the website snapshot:
 
 ```sh
-python3 scripts/export_website.py /Users/jonathan/Github/ecological-interaction.github.io
+python3 scripts/export_website.py PATH_TO_WEBSITE_CHECKOUT
 ```
+
+Replace PATH_TO_WEBSITE_CHECKOUT with the existing local website checkout.
 
 The website must include stylesheets/computation.css under extra_css.
 Snapshots let hosted builds work without access to a sibling checkout or an
 unpublished commit. Review and commit the generated changes alongside the source.
 The existing site navigation and publication hooks are retained.
+
+## Current documentation maintenance — 2026-11-03
+
+- Prepared local terminology corrections to Ecological Computation and corrected the containing directory to `ecological-computation/`. The current umbrella checkout is `ecological-computation/ecological-computation/`; processing repositories remain independent siblings.
+- Verified the public umbrella destination: [ecological-interaction/ecological-computation](https://github.com/ecological-interaction/ecological-computation). The configured legacy origin `https://github.com/Jonathan-Minchin/ecological-computing.git` redirects to that organisation repository. No remote configuration was changed.
+- Anonymous checks returned HTTP 404 for all three processing repositories under both the personal and organisation accounts. Unavailable-link labels remain; this does not establish whether a repository is private or absent.
+- Preserved the dated link checks, local-rename account and verification record below. No processing algorithms, numerical assumptions, layout or navigation were changed. These documentation corrections are local preparation, not a published release.
 
 ## Public link checks — 2026-10-26
 
@@ -40,7 +49,7 @@ These may be private or unavailable. They are not live catalogue publication
 links. Verify availability again before replacing the unavailable-link labels.
 No repository was renamed remotely and no remote URL was changed.
 
-## Local rename
+## Historical local rename — 2026-10-26
 
 The umbrella now lives at ecological-computing/ecological-computation.
 The containing directory and processing repositories retain their names.
