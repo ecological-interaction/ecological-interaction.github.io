@@ -110,6 +110,10 @@ class SiteNavigationTests(unittest.TestCase):
             '/information/EII/observational-systems/': 'EII — Observational Systems',
             '/information/OSDS/': 'Observational Systems and Data Sources',
             '/information/OSDS/scientific-reference-register/': 'Scientific Reference Register',
+            '/information/AMRKB/': 'Agricultural Modes (AMRKB)',
+            '/information/AMRKB/scientific-reference-register/': 'Scientific Reference',
+            '/information/BIPKB/': 'Bioindicators and Phenotypes (BIPKB)',
+            '/information/BIPKB/scientific-reference-register/': 'Scientific Reference',
         }
         anchors = self.nav.all(lambda n: n.tag == 'a' and not urlsplit(n.attrs.get('href', '')).fragment)
         for route, label in expected.items():
@@ -164,7 +168,7 @@ class SiteNavigationTests(unittest.TestCase):
 
     def test_native_disclosure_scaffolding_and_accessibility_script_are_present(self):
         containers = self.nav.all(lambda n: n.tag == 'div' and has_class(n, 'md-nav__container'))
-        self.assertEqual(len(containers), 6)
+        self.assertEqual(len(containers), 8)
         for container in containers:
             title = container.all(lambda n: n.tag == 'a')[0]
             control = container.all(lambda n: n.tag == 'label')[0]

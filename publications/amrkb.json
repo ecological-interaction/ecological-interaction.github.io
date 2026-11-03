@@ -1,0 +1,61 @@
+{
+  "repository": "https://github.com/ecological-interaction/AMRKB",
+  "commit": "e8dd2592e57df15ff21f7d7d69c8960a75d61a24",
+  "documents": [
+    {
+      "source": "README.md",
+      "page": "information/AMRKB/index.md",
+      "sha256": "7d28a9539e517e73707e2be73ffb6dd874837cb877924baef02ab2689e042f7a"
+    },
+    {
+      "source": "AMRKB_Scientific_Reference_Register.md",
+      "page": "information/AMRKB/scientific-reference-register.md",
+      "sha256": "a9c23929ea2aa3601e78f42f2e6614425604d0e4018b1cef165050a2e1bc7e4b"
+    }
+  ],
+  "references": [
+    {
+      "source": "AMRKB_Machine_Reference.json",
+      "sha256": "487bb54a82b622c5d6c7f2ff3dfcdedc23eed5443594dcff6efb265b9b58bdba"
+    },
+    {
+      "source": "AMRKB_Machine_Reference.schema.json",
+      "sha256": "8e97406bba7536f1a523d262d8d0dcc6e8943b8d893fe04bb98176d16baff6ef"
+    },
+    {
+      "source": "AMRKB_Research_Protocol.md",
+      "sha256": "e200c360340de6dc9c2baa83aea37b0387b239fb15f1ab2fa90704c4fe6fa40b"
+    },
+    {
+      "source": "AMRKB_Source_Editions.json",
+      "sha256": "87f1fc90fb34e661bc39b1b9312e6a68020e9b284de69fbd7dd3365e08d06b2f"
+    },
+    {
+      "source": "AMRKB_Source_Edition_Comparison.json",
+      "sha256": "49f36b33afd7fbda4938d9acd49e281f9875ef95384b02bb13075f77d14e6f1b"
+    },
+    {
+      "source": "CITATION.cff",
+      "sha256": "3c6ba1383dba61cbcb90c7b9152be2d75cac6518436cdedff6d4d88a46a427e0"
+    },
+    {
+      "source": "CHANGELOG.md",
+      "sha256": "8600c9a82bc29fa06721fab1fb54db1f40a25877d991834fdee066b7b0f341d9"
+    },
+    {
+      "source": "assets/diagrams/amrkb_overview.mmd",
+      "sha256": "c75f606909d641629b1b5a5739aaf18c3fb96c0f2f31bc379c6ee3dafda47433"
+    },
+    {
+      "source": "assets/diagrams/render_amrkb_overview.py",
+      "sha256": "a8e06c673bb376dfa6d5773021c5bb9e3b0617e4546bc503de16fda2c697772a"
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/diagrams/amrkb_overview.svg",
+      "page": "information/AMRKB/assets/diagrams/amrkb_overview.svg",
+      "sha256": "b88dbcfb09dfb4cd69bf26c247adf5c48106aaf67a746f09de0fb75017925cc0"
+    }
+  ]
+}

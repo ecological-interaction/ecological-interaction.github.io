@@ -164,6 +164,8 @@ class InformationPublicationTests(unittest.TestCase):
             "Geographic Sources": ("GISDS", ["index.md", "resource-catalogue.md"]),
             "Indicator Inventory": ("EII", ["index.md", "remote-sensing.md", "observational-systems.md"]),
             "Observational Systems and Data Sources": ("OSDS", ["index.md", "scientific-reference-register.md"]),
+            "Agricultural Modes (AMRKB)": ("AMRKB", ["index.md", "scientific-reference-register.md"]),
+            "Bioindicators and Phenotypes (BIPKB)": ("BIPKB", ["index.md", "scientific-reference-register.md"]),
         }
         self.assertEqual(set(groups), set(expected))
         for label, (acronym, filenames) in expected.items():

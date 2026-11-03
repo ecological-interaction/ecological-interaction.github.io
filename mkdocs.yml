@@ -28,6 +28,7 @@ hooks:
   - scripts/gisds_publication.py
   - scripts/eii_publication.py
   - scripts/osds_publication.py
+  - scripts/knowledge_bases_publication.py
 
 nav:
   - Understanding: understanding/index.md
@@ -48,6 +49,12 @@ nav:
       - Observational Systems and Data Sources:
           - information/OSDS/index.md
           - Scientific Reference Register: information/OSDS/scientific-reference-register.md
+      - Agricultural Modes (AMRKB):
+          - information/AMRKB/index.md
+          - Scientific Reference: information/AMRKB/scientific-reference-register.md
+      - Bioindicators and Phenotypes (BIPKB):
+          - information/BIPKB/index.md
+          - Scientific Reference: information/BIPKB/scientific-reference-register.md
   - Computation: computation/index.md
   - Intelligence: intelligence/index.md
   - Infrastructure: infrastructure/index.md

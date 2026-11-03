@@ -1,0 +1,62 @@
+{
+  "repository": "https://github.com/ecological-interaction/BIPKB",
+  "commit": "450efb895a9db28ea715f6ce28eb031f6a1dfe68",
+  "documents": [
+    {
+      "source": "README.md",
+      "page": "information/BIPKB/index.md",
+      "sha256": "fba281b5710889daf10796080267312c713261a3698b74a5484fcf4935975443"
+    },
+    {
+      "source": "BIPKB_Scientific_Reference_Register.md",
+      "page": "information/BIPKB/scientific-reference-register.md",
+      "sha256": "e25e0f0bd5d0f359edbafe13dd5c81df0013f52d2509b22b63d349f6437fbafc"
+    }
+  ],
+  "references": [
+    {
+      "source": "BIPKB_Machine_Reference.json",
+      "sha256": "b836c893094e56a4a3d8a5e626f157485503d3843fdc39830ab663cd11dd30a0"
+    },
+    {
+      "source": "BIPKB_Machine_Reference.schema.json",
+      "sha256": "620e56764ffcfa687a36a31f0edc4628520028a04beea4c20adb45ad523b0bf8"
+    },
+    {
+      "source": "BIPKB_Research_Protocol.md",
+      "sha256": "bd8c46edbf57ed702b637123c0011079fbba25d674d06efdb07eb071f8008743"
+    },
+    {
+      "source": "CITATION.cff",
+      "sha256": "e94b2b3929fd76e026973dbb44db49e7701b443f43c556ea0c214ee5db02a42b"
+    },
+    {
+      "source": "CHANGELOG.md",
+      "sha256": "5009a3bca624c6a5eb7ae880f23e5b0af731ae5cacfdf4aee7be124f054bbc01"
+    },
+    {
+      "source": "assets/diagrams/bipkb_federation.mmd",
+      "sha256": "224c47039e8e6cd1f9aeb69c41bcf605f83cf9a8ac67dc6b63be33e8e23d3191"
+    },
+    {
+      "source": "assets/diagrams/bipkb_conceptual_reconstruction.mmd",
+      "sha256": "9e98e7fa7ca8c25daef48a9cf9aedd20006c978b3a2340c3cf9392c786980166"
+    },
+    {
+      "source": "scripts/render_bipkb.py",
+      "sha256": "7687194637132397bd7f920921d32fc87bef2d7643bfe4070917ae14109c79cf"
+    }
+  ],
+  "assets": [
+    {
+      "source": "assets/diagrams/bipkb_federation.svg",
+      "page": "information/BIPKB/assets/diagrams/bipkb_federation.svg",
+      "sha256": "85a54750bde040c6690a43873f29247e26bd97bcc952c53be53abc6bff1b6298"
+    },
+    {
+      "source": "assets/diagrams/bipkb_conceptual_reconstruction.svg",
+      "page": "information/BIPKB/assets/diagrams/bipkb_conceptual_reconstruction.svg",
+      "sha256": "70032312d6e28b5996a447e3b6a2ac18bf977e696c36d59c9483b12a3a6c3ab6"
+    }
+  ]
+}

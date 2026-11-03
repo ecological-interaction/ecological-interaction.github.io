@@ -166,6 +166,58 @@ jobs:
           ], check=True)
           PYTHON
 
+      - name: Retrieve approved AMRKB commit anonymously
+        env:
+          GIT_TERMINAL_PROMPT: "0"
+          GIT_ASKPASS: /bin/false
+          GIT_CONFIG_NOSYSTEM: "1"
+          GIT_CONFIG_GLOBAL: /dev/null
+        run: |
+          python3 - <<'PYTHON'
+          import json
+          from pathlib import Path
+          import re
+          import subprocess
+
+          data = json.loads(Path("publications/amrkb.json").read_text())
+          repository = "https://github.com/ecological-interaction/AMRKB"
+          if data["repository"] != repository or not re.fullmatch(r"[0-9a-f]{40}", data["commit"]):
+              raise SystemExit("Unexpected AMRKB repository or unapproved commit")
+          source = ".sources/AMRKB"
+          subprocess.run(["git", "init", "--bare", "--initial-branch=main", source], check=True)
+          subprocess.run([
+              "git", "-C", source, "-c", "credential.helper=", "-c", "core.askPass=",
+              "-c", "http.extraHeader=", "fetch", "--depth=1", "--no-tags",
+              repository + ".git", data["commit"],
+          ], check=True)
+          PYTHON
+
+      - name: Retrieve approved BIPKB commit anonymously
+        env:
+          GIT_TERMINAL_PROMPT: "0"
+          GIT_ASKPASS: /bin/false
+          GIT_CONFIG_NOSYSTEM: "1"
+          GIT_CONFIG_GLOBAL: /dev/null
+        run: |
+          python3 - <<'PYTHON'
+          import json
+          from pathlib import Path
+          import re
+          import subprocess
+
+          data = json.loads(Path("publications/bipkb.json").read_text())
+          repository = "https://github.com/ecological-interaction/BIPKB"
+          if data["repository"] != repository or not re.fullmatch(r"[0-9a-f]{40}", data["commit"]):
+              raise SystemExit("Unexpected BIPKB repository or unapproved commit")
+          source = ".sources/BIPKB"
+          subprocess.run(["git", "init", "--bare", "--initial-branch=main", source], check=True)
+          subprocess.run([
+              "git", "-C", source, "-c", "credential.helper=", "-c", "core.askPass=",
+              "-c", "http.extraHeader=", "fetch", "--depth=1", "--no-tags",
+              repository + ".git", data["commit"],
+          ], check=True)
+          PYTHON
+
       - name: Retrieve approved Understanding commit anonymously
         env:
           GIT_TERMINAL_PROMPT: "0"
@@ -214,6 +266,8 @@ jobs:
           GISDS_SOURCE: ${{ github.workspace }}/.sources/GISDS
           INFORMATION_SOURCE: ${{ github.workspace }}/.sources/ecological-information
           OSDS_SOURCE: ${{ github.workspace }}/.sources/OSDS
+          AMRKB_SOURCE: ${{ github.workspace }}/.sources/AMRKB
+          BIPKB_SOURCE: ${{ github.workspace }}/.sources/BIPKB
         run: uv run python -B -m unittest discover -s tests -v
 
       - name: Build website
@@ -225,6 +279,8 @@ jobs:
           GISDS_SOURCE: ${{ github.workspace }}/.sources/GISDS
           EII_SOURCE: ${{ github.workspace }}/.sources/EII
           OSDS_SOURCE: ${{ github.workspace }}/.sources/OSDS
+          AMRKB_SOURCE: ${{ github.workspace }}/.sources/AMRKB
+          BIPKB_SOURCE: ${{ github.workspace }}/.sources/BIPKB
         run: uv run mkdocs build --strict
 
       - name: Configure Pages

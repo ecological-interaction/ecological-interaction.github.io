@@ -280,3 +280,41 @@ real resources requires a separately reviewed publication allowlist.
 Source `main` advancing alone does not update the website. Review the exact source
 commit and checksums before changing this manifest. A website push to `main` triggers
 the existing Pages deployment workflow; keep publication changes unpushed until review.
+
+## AMRKB and BIPKB publication
+
+`publications/amrkb.json` and `publications/bipkb.json` pin verified public source
+commits and SHA-256 allowlists. `scripts/knowledge_bases_publication.py` follows
+the same Git-object/File.generated publication pattern as the existing database
+hooks. Each README supplies its section index; its only navigation child is
+Scientific Reference (`scientific-reference-register/`). AMRKB retains its
+authoritative name Agricultural Modes Reference Knowledge Base.
+
+The AMRKB overview SVG and both BIPKB SVGs are imported byte-for-byte. Linked
+machine references, protocols, citation metadata, source-edition metadata and
+editable diagram sources are checksum-verified source-only references targeting
+the same pinned GitHub commit. No source renderer is executed. Only link
+destinations and GitHub-compatible heading aliases are adapted; scientific tables,
+source qualifications and research wording remain source-owned.
+
+The shared hook adds contextual links to the Information overview without editing
+the authoritative umbrella README. Existing publications and their pins remain
+independent. Source updates alone never advance publication pins.
+
+GitHub Actions fetches both exact commits anonymously with credentials disabled,
+and sets `AMRKB_SOURCE` and `BIPKB_SOURCE` for tests and builds. Locally those
+variables may select an approved checkout or bare cache; defaults are the sibling
+research repositories. Hosted builds require explicit sources. Missing commits,
+changed checksums, unapproved links or colliding destinations fail closed.
+
+Run the existing tests and strict build, then start the documented local server:
+
+```sh
+uv run --no-sync python -B -m unittest discover -s tests -v
+uv run --no-sync mkdocs build --strict
+uv run --no-sync mkdocs serve --dev-addr 127.0.0.1:8000
+```
+
+Review `/information/AMRKB/`, `/information/AMRKB/scientific-reference-register/`,
+`/information/BIPKB/` and `/information/BIPKB/scientific-reference-register/`.
+No licence, DOI, scientific verification or source-review acceptance is implied.

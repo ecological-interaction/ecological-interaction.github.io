@@ -214,8 +214,8 @@ class DraftBuildTests(unittest.TestCase):
         understanding = [n for n in anchors if n.text().strip() == 'Understanding']
         self.assertEqual(len(understanding), 1)
         self.assertFalse(any(n.text().strip() == 'Overview' for n in anchors))
-        self.assertEqual(len(nav.all(lambda n: n.tag == 'div' and has_class(n, 'md-nav__container'))), 6)
-        for route in ['information', 'information/EII', 'information/OSDS', 'information/GISDS']:
+        self.assertEqual(len(nav.all(lambda n: n.tag == 'div' and has_class(n, 'md-nav__container'))), 8)
+        for route in ['information', 'information/EII', 'information/OSDS', 'information/GISDS', 'information/AMRKB', 'information/BIPKB']:
             self.assertTrue((self.site / route / 'index.html').is_file())
 
 
